@@ -174,6 +174,10 @@ def create_app():
 
     if os.environ.get('FLASK_DEBUG'):
         cache_buster.init_cache_busting(app)
+        # Disable template caching in development for faster iteration
+        app.config['TEMPLATES_AUTO_RELOAD'] = True
+        app.jinja_env.auto_reload = True
+        app.jinja_env.cache = None
     log.info('Starting Calibre Web...')
     Principal(app)
     lm.init_app(app)

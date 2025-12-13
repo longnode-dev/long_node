@@ -35,3 +35,11 @@ gdrive_credentials
 client_secrets.json
 gmail.json
 /.key
+.cursor/
+.cursorrules
+
+# Visual regression testing (Playwright)
+test/playwright/screenshots/
+test/playwright/*.html
+test/playwright/*.xml
+!test/playwright/baselines/
