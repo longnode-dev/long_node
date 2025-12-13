@@ -39,7 +39,4 @@ gmail.json
 .cursorrules
 
 # Visual regression testing (Playwright)
-test/playwright/screenshots/
-test/playwright/*.html
-test/playwright/*.xml
-!test/playwright/baselines/
+test/playwright/
