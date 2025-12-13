@@ -1665,11 +1665,26 @@ def show_book(book_id):
             if media_format.format.lower() in constants.EXTENSIONS_AUDIO:
                 entry.audio_entries.append(media_format.format.lower())
 
-        return render_title_template('detail.html',
+        # Construct enhanced page title for Long Node Theme: "Book Name - Author Name (Year)"
+        author_names = ', '.join([a.name.replace('|', ',') for a in entry.ordered_authors])
+        pub_year = ''
+        if entry.pubdate and str(entry.pubdate)[:10] != '0101-01-01':
+            try:
+                pub_year = f" ({entry.pubdate.year})"
+            except:
+                pub_year = ''
+        detail_title = f"{entry.title} - {author_names}{pub_year}"
+        
+        # Select template based on theme
+        # Theme 2 (Long Node) uses full-page book_detail.html
+        # Other themes use detail.html (with modal support)
+        template_name = 'book_detail.html' if config.config_theme == 2 else 'detail.html'
+        
+        return render_title_template(template_name,
                                      entry=entry,
                                      cc=cc,
                                      is_xhr=request.headers.get('X-Requested-With') == 'XMLHttpRequest',
-                                     title=entry.title,
+                                     title=detail_title,
                                      books_shelfs=book_in_shelves,
                                      page="book")
     else:
