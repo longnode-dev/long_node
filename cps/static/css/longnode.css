@@ -21,10 +21,28 @@
 }
 */
 
+/* ========================================
+   Inter Variable Font - Self-Hosted
+   Optimized for Chrome + Safari
+   ======================================== */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900; /* Variable font supports all weights */
+    font-display: swap; /* Prevent FOUT */
+    src: url('../fonts/inter/Inter-Variable.woff2') format('woff2-variations');
+}
+
 /* Body styling for Long Node Theme */
 body.longnode {
     /* Remove bottom margin that causes white gap */
     margin-bottom: 0;
+    /* Swiss International Typography */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased; /* Chrome + Safari optimization */
+    -moz-osx-font-smoothing: grayscale; /* Completeness */
+    text-rendering: optimizeLegibility; /* Better kerning on Safari */
 }
 
 /* ========================================
@@ -750,11 +768,22 @@ body.longnode .navbar-default {
 
 /* Logo - amber/gold accent, fixed width to match sidebar */
 body.longnode .navbar-brand {
+    /* Typography - Swiss International Style */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 950; /* ExtraBold - can fine-tune to 750, 825, etc. with variable font */
+    letter-spacing: -0.04em; /* Tight tracking for brand feel */
+    font-size: 2.4rem; /* 24px - prominent but not oversized */
+    
+    /* Enhanced rendering for Chrome/Safari */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    
+    /* Existing color/layout */
     color: var(--ln-accent) !important;
     width: 180px;
     min-width: 180px;
     box-sizing: border-box;
-    padding-left: 15px;
+    padding-left: 25px;
     margin-left: 0;
 }
 
