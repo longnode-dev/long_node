@@ -145,3 +145,111 @@ body.longnode .related-books-placeholder {
         margin: 0 auto;
     }
 }
+
+/* ========================================
+   Book Detail Page - Hide Sidebar
+   ======================================== */
+
+/* Hide sidebar on book detail page - always use hamburger menu */
+body.book.longnode .container-fluid > .row-fluid > .col-sm-2 {
+    display: none;
+}
+
+body.book.longnode .container-fluid > .row-fluid > .col-sm-10 {
+    width: 100%;
+}
+
+/* Bottom action buttons alignment */
+body.book.longnode .book-detail-bottom-actions .btn {
+    height: 34px;
+    line-height: 20px;
+}
+
+/* ========================================
+   Book Detail Page - Compact Navbar
+   ======================================== */
+
+/* Always show hamburger menu on book detail page */
+body.book.longnode .navbar-toggle {
+    display: block !important;
+    float: left;
+    margin-left: 15px;
+}
+
+/* Make navbar-collapse a dropdown overlay instead of pushing content */
+body.book.longnode .navbar-collapse {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 80vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Hide by default, show when .in class is added */
+body.book.longnode .navbar-collapse.collapse {
+    display: none !important;
+}
+
+body.book.longnode .navbar-collapse.collapse.in {
+    display: block !important;
+}
+
+/* Make all navbar items display as vertical list (not horizontal) */
+body.book.longnode .navbar-collapse .navbar-nav {
+    float: none !important;
+    margin: 0;
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li {
+    float: none !important;
+    display: block !important;
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li > a {
+    padding: 10px 20px;
+    display: block;
+    color: #333;
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li > a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Style the cloned sidebar items in the dropdown */
+body.book.longnode .navbar-collapse .longnode-sidebar-clone {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+body.book.longnode .navbar-collapse .longnode-sidebar-clone li a {
+    padding: 10px 20px;
+    display: block;
+    color: #333;
+}
+
+body.book.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
+    background-color: #f5f5f5;
+}
+
+/* Hide unnecessary items: Browse heading, Shelves heading, Create a Shelf */
+/* Note: These are also removed/hidden via JavaScript for better reliability */
+body.book.longnode .navbar-collapse .nav-head,
+body.book.longnode .navbar-collapse .create-shelf,
+body.book.longnode .navbar-collapse #nav_createshelf {
+    display: none !important;
+}
+
+/* Adjust search bar position for hamburger on left - only on larger viewports */
+/* On mobile, search bar stacks below so no indent needed */
+@media (min-width: 768px) {
+    body.book.longnode .navbar-form.navbar-left {
+        margin-left: 60px;
+    }
+}

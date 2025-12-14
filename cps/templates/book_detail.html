@@ -9,17 +9,6 @@
 {% endblock %}
 {% block body %}
 <div class="single book-detail-page">
-    {% if g.current_theme == 2 %}
-    <div class="row">
-        <div class="col-xs-12">
-            <a href="javascript:void(0)" id="back" class="btn btn-default longnode-back" 
-               data-back="{{ url_for('web.index') }}">
-                <span class="glyphicon glyphicon-arrow-left"></span> {{_('Back')}}
-            </a>
-        </div>
-    </div>
-    {% endif %}
-    
     <div class="row">
         <div class="col-sm-3 col-lg-3 col-xs-12">
             <div class="cover">
@@ -268,18 +257,6 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="custom_columns">
-                    <p>
-                    <form id="have_read_form" action="{{ url_for('web.toggle_read', book_id=entry.id) }}"
-                          method="POST">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <label class="block-label">
-                            <input id="have_read_cb" data-checked="{{ _('Mark As Unread') }}"
-                                   data-unchecked="{{ _('Mark As Read') }}" type="checkbox"
-                                   {% if entry.read_status %}checked{% endif %}>
-                            <span data-toggle="tooltip" title="{{_('Mark Book as Read or Unread')}}">{{ _('Read') }}</span>
-                        </label>
-                    </form>
-                    </p>
                     {% if current_user.check_visibility(32768) %}
                         <p>
                         <form id="archived_form" action="{{ url_for('web.toggle_archived', book_id=entry.id) }}"
@@ -353,12 +330,16 @@
     {% endif %}
 
     {% if current_user.role_edit() %}
-        <div class="row">
+        <div class="row book-detail-bottom-actions">
             <div class="col-xs-12">
                 <div class="btn-group" role="group" aria-label="Edit/Delete book">
                     <a href="{{ url_for('edit-book.show_edit_book', book_id=entry.id) }}"
-                       class="btn btn-sm btn-primary" id="edit_book" role="button"><span
+                       class="btn btn-primary" id="edit_book" role="button"><span
                             class="glyphicon glyphicon-edit"></span> {{ _('Edit Metadata') }}</a>
+                    <a href="javascript:void(0)" id="back" class="btn btn-default" 
+                       data-back="{{ url_for('web.index') }}">
+                        <span class="glyphicon glyphicon-arrow-left"></span> {{_('Back')}}
+                    </a>
                 </div>
             </div>
         </div>
