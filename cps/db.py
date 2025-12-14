@@ -885,6 +885,11 @@ class CalibreDB:
                 element += 1
         query = query.filter(db_filter)\
             .filter(self.common_filters(allow_show_archived))
+        
+        # Eagerly load comments (descriptions) for Long Node theme tooltips
+        if database == Books:
+            query = query.options(selectinload(Books.comments))
+        
         entries = list()
         pagination = list()
         try:

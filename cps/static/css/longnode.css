@@ -2,6 +2,25 @@
 /* Initially inherits from standard theme */
 /* Add customizations here as needed */
 
+/* ========================================
+   Theme Configuration Variables
+   ======================================== */
+
+:root {
+    /* Tooltip styling - customize these to change appearance */
+    --ln-tooltip-bg: #2c3e50;           /* Dark blue-gray background */
+    --ln-tooltip-text: #ffffff;          /* White text */
+    --ln-tooltip-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Alternative: Light theme tooltips (uncomment to use) */
+/*
+:root {
+    --ln-tooltip-bg: #f8f9fa;
+    --ln-tooltip-text: #212529;
+}
+*/
+
 /* Body styling for Long Node Theme */
 body.longnode {
     /* Custom styles will be added here */
@@ -398,6 +417,10 @@ body.book.longnode .container-fluid > .row-fluid > .col-sm-2 {
 
 body.book.longnode .container-fluid > .row-fluid > .col-sm-10 {
     width: 100%;
+    /* Remove fixed height constraints to allow natural page scrolling */
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
 }
 
 /* Bottom action buttons alignment */
@@ -492,5 +515,151 @@ body.book.longnode .navbar-collapse #nav_createshelf {
 @media (min-width: 768px) {
     body.book.longnode .navbar-form.navbar-left {
         margin-left: 60px;
+    }
+}
+
+/* ========================================
+   Book Cover Tooltips
+   ======================================== */
+
+/* Tooltip container - applied to span.img elements */
+body.longnode .ln-tooltip {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Tooltip content bubble */
+body.longnode .ln-tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    z-index: 9999;
+    
+    /* Appearance */
+    background-color: var(--ln-tooltip-bg, #2c3e50);
+    color: var(--ln-tooltip-text, #ffffff);
+    font-family: var(--ln-tooltip-font, inherit);
+    font-size: 14px;
+    line-height: 1.6;
+    
+    /* Sizing and spacing */
+    min-width: 250px;
+    max-width: 400px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    
+    /* Hide by default */
+    opacity: 0;
+    pointer-events: none;
+    
+    /* Smooth transition */
+    transition: opacity 0.2s ease-in-out;
+    
+    /* Text overflow handling */
+    word-wrap: break-word;
+    white-space: pre-line;
+}
+
+/* Tooltip arrow */
+body.longnode .ln-tooltip::after {
+    content: "";
+    position: absolute;
+    z-index: 10000;
+    
+    /* Arrow size */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    
+    /* Hide by default */
+    opacity: 0;
+    pointer-events: none;
+    
+    /* Smooth transition */
+    transition: opacity 0.2s ease-in-out;
+    
+    /* Arrow color matches tooltip background */
+    border-color: transparent;
+}
+
+/* Show tooltip on hover */
+body.longnode .ln-tooltip:hover::before,
+body.longnode .ln-tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Position: Top (default) */
+body.longnode .ln-tooltip-top::before {
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+body.longnode .ln-tooltip-top::after {
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px 8px 0 8px;
+    border-top-color: var(--ln-tooltip-bg, #2c3e50);
+}
+
+/* Position: Bottom */
+body.longnode .ln-tooltip-bottom::before {
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+body.longnode .ln-tooltip-bottom::after {
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 8px 8px 8px;
+    border-bottom-color: var(--ln-tooltip-bg, #2c3e50);
+}
+
+/* Position: Left */
+body.longnode .ln-tooltip-left::before {
+    right: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+body.longnode .ln-tooltip-left::after {
+    right: calc(100% + 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 8px 0 8px 8px;
+    border-left-color: var(--ln-tooltip-bg, #2c3e50);
+}
+
+/* Position: Right */
+body.longnode .ln-tooltip-right::before {
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+body.longnode .ln-tooltip-right::after {
+    left: calc(100% + 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 8px 8px 8px 0;
+    border-right-color: var(--ln-tooltip-bg, #2c3e50);
+}
+
+/* Mobile: Disable tooltips on touch devices */
+@media (hover: none) {
+    body.longnode .ln-tooltip::before,
+    body.longnode .ln-tooltip::after {
+        display: none;
+    }
+}
+
+/* Responsive tooltip width on smaller screens */
+@media (max-width: 767px) {
+    body.longnode .ln-tooltip::before {
+        max-width: 90vw;
+        min-width: 200px;
     }
 }

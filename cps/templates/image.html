@@ -1,12 +1,37 @@
-{% macro book_cover(book, alt=None) -%}
+{% macro book_cover(book, alt=None, include_description=False) -%}
     {%- set image_title = book.title if book.title else book.name -%}
     {%- set image_alt = alt if alt else image_title -%}
     {% set srcset = book|get_cover_srcset %}
+    
+    {%- set description = '' -%}
+    {%- if include_description and book.comments and book.comments|length > 0 -%}
+        {%- set raw_desc = book.comments[0].text -%}
+        {#- Convert all common HTML line break elements to placeholder before stripping tags -#}
+        {%- set step1 = raw_desc
+            |replace('</p>', '|||NL||||||NL|||')|replace('</P>', '|||NL||||||NL|||')
+            |replace('<p>', '')|replace('<P>', '')
+            |replace('<br>', '|||NL|||')|replace('<BR>', '|||NL|||')
+            |replace('<br/>', '|||NL|||')|replace('<BR/>', '|||NL|||')
+            |replace('<br />', '|||NL|||')|replace('<BR />', '|||NL|||')
+            |replace('</div>', '|||NL|||')|replace('</DIV>', '|||NL|||')
+            |replace('<div>', '')|replace('<DIV>', '')
+            |replace('</li>', '|||NL|||')|replace('</LI>', '|||NL|||')
+            |replace('<li>', '• ')|replace('<LI>', '• ')
+        -%}
+        {#- Strip remaining HTML tags and truncate -#}
+        {%- set step2 = step1|striptags|truncate(10000, False, '') -%}
+        {#- Add line breaks after sentences for better readability -#}
+        {%- set description = step2|replace('. ', '.|||NL|||')|replace('? ', '?|||NL|||')|replace('! ', '!|||NL|||') -%}
+    {%- endif -%}
+    
     <img
         srcset="{{ srcset }}"
         src="{{ url_for('web.get_cover', book_id=book.id, resolution='og', c=book|last_modified) }}"
         alt="{{ image_alt }}"
         loading="lazy"
+        {%- if description %}
+        data-description="{{ description }}"
+        {%- endif %}
     />
 {%- endmacro %}
 
