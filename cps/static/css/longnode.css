@@ -23,7 +23,8 @@
 
 /* Body styling for Long Node Theme */
 body.longnode {
-    /* Custom styles will be added here */
+    /* Remove bottom margin that causes white gap */
+    margin-bottom: 0;
 }
 
 /* ========================================
@@ -478,16 +479,16 @@ body.book.longnode .navbar-collapse .navbar-nav > li {
 body.book.longnode .navbar-collapse .navbar-nav > li > a {
     padding: 10px 20px;
     display: block;
-    color: #333;
+    /* Colors defined in color scheme section */
 }
 
 body.book.longnode .navbar-collapse .navbar-nav > li > a:hover {
-    background-color: #f5f5f5;
+    /* Colors defined in color scheme section */
 }
 
 /* Style the cloned sidebar items in the dropdown */
 body.book.longnode .navbar-collapse .longnode-sidebar-clone {
-    border-top: 1px solid #eee;
+    border-top: 1px solid #444;
     padding-top: 10px;
     margin-top: 10px;
 }
@@ -495,11 +496,11 @@ body.book.longnode .navbar-collapse .longnode-sidebar-clone {
 body.book.longnode .navbar-collapse .longnode-sidebar-clone li a {
     padding: 10px 20px;
     display: block;
-    color: #333;
+    /* Colors defined in color scheme section */
 }
 
 body.book.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
-    background-color: #f5f5f5;
+    /* Colors defined in color scheme section */
 }
 
 /* Hide unnecessary items: Browse heading, Shelves heading, Create a Shelf, About */
@@ -533,7 +534,7 @@ body.longnode .navbar-collapse #nav_about {
 /* On mobile, search bar stacks below so no indent needed */
 @media (min-width: 768px) {
     body.book.longnode .navbar-form.navbar-left {
-        margin-left: 60px;
+        margin-left: 50px;
     }
 }
 
@@ -715,4 +716,414 @@ body.longnode .new-books-page .month-header {
     body.longnode .new-books-page .month-divider {
         margin: 25px 0 10px 0;
     }
+}
+
+/* ========================================
+   Long Node Color Scheme
+   ======================================== */
+
+/* Color Variables */
+body.longnode {
+    --ln-topnav-bg: #1e1e24;          /* Deep Obsidian */
+    --ln-sidebar-bg: #25262b;          /* Dark Graphite */
+    --ln-body-bg: #f0f0eb;             /* Warm Paper */
+    --ln-accent: #e8a838;              /* Warm Amber/Gold accent */
+    --ln-accent-hover: #d4983d;        /* Darker amber for hover */
+    --ln-text-light: #e0e0e0;          /* Light text for dark backgrounds */
+    --ln-text-dim: #a0a0a0;            /* Dimmed text/icons */
+    --ln-text-dark: #333333;           /* Dark text for light backgrounds */
+    --ln-text-muted: #666666;          /* Muted text */
+    --ln-hover-bg: #32333a;            /* Hover state on dark backgrounds */
+    --ln-border-warm: #d8d8d0;         /* Warm border color */
+}
+
+/* ----------------------------------------
+   Top Navigation Bar - Deep Obsidian
+   ---------------------------------------- */
+
+body.longnode .navbar-default {
+    background-color: var(--ln-topnav-bg);
+    border-color: var(--ln-topnav-bg);
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Logo - amber/gold accent, fixed width to match sidebar */
+body.longnode .navbar-brand {
+    color: var(--ln-accent) !important;
+    width: 180px;
+    min-width: 180px;
+    box-sizing: border-box;
+    padding-left: 15px;
+    margin-left: 0;
+}
+
+body.longnode .navbar-brand:hover {
+    color: #f0b848 !important;
+}
+
+/* Search form - align with main content left edge */
+@media (min-width: 768px) {
+    body.longnode .navbar-form.navbar-left {
+        /* Adjust this value to align search with "Books" title */
+        margin-left: 15px;
+        padding-left: 0;
+    }
+}
+
+/* Search input */
+body.longnode .navbar-form .form-control {
+    background-color: #ffffff;
+    border-color: #444;
+    color: #333;
+}
+
+body.longnode .navbar-form .form-control::placeholder {
+    color: #999;
+}
+
+body.longnode .navbar-form .btn-default {
+    background-color: var(--ln-accent);
+    border-color: var(--ln-accent);
+    color: #1e1e24;
+}
+
+body.longnode .navbar-form .btn-default:hover {
+    background-color: var(--ln-accent-hover);
+    border-color: var(--ln-accent-hover);
+}
+
+/* Nav links (Advanced Search, Admin, user, Logout) */
+body.longnode .navbar-default .navbar-nav > li > a {
+    color: var(--ln-text-light);
+}
+
+body.longnode .navbar-default .navbar-nav > li > a:hover,
+body.longnode .navbar-default .navbar-nav > li > a:focus {
+    color: #ffffff;
+    background-color: var(--ln-hover-bg);
+}
+
+/* Icons in nav */
+body.longnode .navbar-default .navbar-nav > li > a .glyphicon {
+    color: var(--ln-text-dim);
+}
+
+body.longnode .navbar-default .navbar-nav > li > a:hover .glyphicon {
+    color: #ffffff;
+}
+
+/* Hamburger menu icon */
+body.longnode .navbar-default .navbar-toggle {
+    border-color: var(--ln-text-dim);
+}
+
+body.longnode .navbar-default .navbar-toggle .icon-bar {
+    background-color: var(--ln-text-light);
+}
+
+body.longnode .navbar-default .navbar-toggle:hover,
+body.longnode .navbar-default .navbar-toggle:focus {
+    background-color: var(--ln-hover-bg);
+}
+
+/* Dropdown menus from navbar */
+body.longnode .navbar-default .dropdown-menu {
+    background-color: var(--ln-topnav-bg);
+    border-color: #444;
+}
+
+body.longnode .navbar-default .dropdown-menu > li > a {
+    color: var(--ln-text-light);
+}
+
+body.longnode .navbar-default .dropdown-menu > li > a:hover {
+    background-color: var(--ln-hover-bg);
+    color: #ffffff;
+}
+
+/* ----------------------------------------
+   Left Sidebar - Dark Graphite (Full Height, Flush)
+   ---------------------------------------- */
+
+/* Remove container padding for flush sidebar */
+body.longnode .container-fluid {
+    padding-left: 0;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* Make the row-fluid a flex container for full-height sidebar - desktop only */
+@media (min-width: 768px) {
+    body.longnode .container-fluid > .row-fluid {
+        display: flex;
+        flex-wrap: nowrap;
+        min-height: calc(100vh - 50px); /* Viewport minus navbar height */
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Sidebar column - full height, flush to edges, fixed max-width */
+    body.longnode .col-sm-2.navigation,
+    body.longnode .container-fluid > .row-fluid > .col-sm-2 {
+        background-color: var(--ln-sidebar-bg);
+        min-height: 100%;
+        padding: 0;
+        margin: 0;
+        flex-shrink: 0;
+        /* Remove nested scrollbar - use page scroll instead */
+        max-height: none;
+        overflow-y: visible;
+        /* Fixed width sidebar */
+        width: 180px;
+        max-width: 180px;
+        flex-basis: 180px;
+    }
+    
+    /* Sidebar nav - compact padding */
+    body.longnode .navigation {
+        padding-top: 15px;
+    }
+    
+    body.longnode .navigation ul {
+        padding: 0;
+        margin: 0;
+    }
+    
+    body.longnode .navigation li a {
+        padding: 8px 15px;
+    }
+    
+    /* Main content area - restore padding, remove nested scrollbar */
+    body.longnode .container-fluid > .row-fluid > .col-sm-10 {
+        padding-left: 25px;
+        padding-right: 15px;
+        padding-top: 15px;
+        /* Remove nested scrollbar - use page scroll instead */
+        max-height: none;
+        overflow-y: visible;
+    }
+}
+
+/* Mobile: restore container padding */
+@media (max-width: 767px) {
+    body.longnode .container-fluid {
+        padding-left: 15px;
+        padding-top: 15px;
+    }
+}
+
+/* Sidebar nav container */
+body.longnode .navigation {
+    background-color: var(--ln-sidebar-bg);
+}
+
+body.longnode .navigation ul {
+    background-color: var(--ln-sidebar-bg);
+}
+
+/* Sidebar nav items */
+body.longnode .navigation li a {
+    color: var(--ln-text-light);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.longnode .navigation li a:hover {
+    color: #ffffff;
+    background-color: var(--ln-hover-bg);
+    text-decoration: none;
+}
+
+/* Sidebar icons */
+body.longnode .navigation li a .glyphicon {
+    color: var(--ln-text-dim);
+    transition: color 0.15s ease;
+}
+
+body.longnode .navigation li a:hover .glyphicon {
+    color: var(--ln-text-light);
+}
+
+/* Active/current page indicator */
+body.longnode .navigation li.active a,
+body.longnode .navigation li a.active {
+    background-color: var(--ln-hover-bg);
+    color: var(--ln-accent);
+    border-left: 3px solid var(--ln-accent);
+}
+
+body.longnode .navigation li.active a .glyphicon,
+body.longnode .navigation li a.active .glyphicon {
+    color: var(--ln-accent);
+}
+
+/* Count numbers in parentheses - slightly dimmer */
+/* These are part of the link text, styled via opacity or separate span if needed */
+
+/* ----------------------------------------
+   Main Body Area - Warm Paper
+   ---------------------------------------- */
+
+body.longnode {
+    background-color: var(--ln-body-bg);
+}
+
+body.longnode .col-sm-10,
+body.longnode .container-fluid > .row-fluid > .col-sm-10 {
+    background-color: var(--ln-body-bg);
+}
+
+/* Page titles */
+body.longnode .discover h2,
+body.longnode h2 {
+    color: var(--ln-text-dark);
+}
+
+/* Month headers on New Books page */
+body.longnode .new-books-page .month-header {
+    color: #444444;
+    border-bottom-color: var(--ln-border-warm);
+}
+
+/* Book titles */
+body.longnode .book .meta .title {
+    color: var(--ln-text-dark);
+}
+
+/* Author links - readable dark color on light background */
+body.longnode .book .meta .author a {
+    color: #666;
+}
+
+body.longnode .book .meta .author a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+/* Series and other metadata */
+body.longnode .book .meta .series,
+body.longnode .book .meta .series a {
+    color: var(--ln-text-muted);
+}
+
+/* Book cover shadows - softer for warm background */
+body.longnode .book .cover img {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ----------------------------------------
+   Hamburger Menu Dropdown (Mobile/Book Detail)
+   ---------------------------------------- */
+
+body.longnode .navbar-collapse {
+    background-color: var(--ln-sidebar-bg);
+    border-color: #444;
+}
+
+body.longnode .navbar-collapse .navbar-nav > li > a {
+    color: var(--ln-text-light);
+}
+
+body.longnode .navbar-collapse .navbar-nav > li > a:hover {
+    background-color: var(--ln-hover-bg);
+    color: #ffffff;
+}
+
+body.longnode .navbar-collapse .longnode-sidebar-clone li a {
+    color: var(--ln-text-light);
+}
+
+body.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
+    background-color: var(--ln-hover-bg);
+    color: #ffffff;
+}
+
+/* Divider line in dropdown */
+body.longnode .navbar-collapse .longnode-sidebar-clone {
+    border-top-color: #444;
+}
+
+/* ----------------------------------------
+   Additional UI Elements
+   ---------------------------------------- */
+
+/* Pagination */
+body.longnode .pagination > li > a {
+    background-color: #ffffff;
+    border-color: var(--ln-border-warm);
+    color: var(--ln-text-dark);
+}
+
+body.longnode .pagination > li > a:hover {
+    background-color: #e8e8e3;
+}
+
+body.longnode .pagination > .active > a {
+    background-color: var(--ln-accent);
+    border-color: var(--ln-accent);
+    color: #1e1e24;
+}
+
+/* Buttons */
+body.longnode .btn-primary {
+    background-color: var(--ln-accent);
+    border-color: var(--ln-accent);
+    color: #1e1e24;
+}
+
+body.longnode .btn-primary:hover {
+    background-color: var(--ln-accent-hover);
+    border-color: var(--ln-accent-hover);
+}
+
+/* Sort buttons in book grid */
+body.longnode .btn-group .btn-primary {
+    background-color: var(--ln-accent);
+    border-color: var(--ln-accent);
+    color: #1e1e24;
+}
+
+body.longnode .btn-group .btn-primary.active {
+    background-color: var(--ln-accent-hover);
+    border-color: var(--ln-accent-hover);
+}
+
+/* Footer if visible */
+body.longnode footer {
+    background-color: var(--ln-sidebar-bg);
+    color: var(--ln-text-dim);
+}
+
+/* ----------------------------------------
+   Book Detail Page Color Overrides
+   ---------------------------------------- */
+
+body.book.longnode .navbar-collapse {
+    background-color: var(--ln-sidebar-bg);
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li > a {
+    color: var(--ln-text-light);
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li > a:hover {
+    background-color: var(--ln-hover-bg);
+    color: #ffffff;
+}
+
+body.book.longnode .navbar-collapse .navbar-nav > li > a .glyphicon {
+    color: var(--ln-text-dim);
+}
+
+body.book.longnode .navbar-collapse .longnode-sidebar-clone li a {
+    color: var(--ln-text-light);
+}
+
+body.book.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
+    background-color: var(--ln-hover-bg);
+    color: #ffffff;
+}
+
+body.book.longnode .navbar-collapse .longnode-sidebar-clone li a .glyphicon {
+    color: var(--ln-text-dim);
 }
