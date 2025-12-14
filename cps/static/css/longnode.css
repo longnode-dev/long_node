@@ -147,6 +147,247 @@ body.longnode .related-books-placeholder {
 }
 
 /* ========================================
+   Book Detail - Two Column Grid Layout
+   ======================================== */
+
+/* Mobile First: Single column layout with flexbox ordering */
+body.longnode .ln-book-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mobile: Left column wrapper also uses column layout */
+body.longnode .ln-left-column {
+    display: contents; /* Let children participate in parent flex for ordering */
+}
+
+/* Mobile order: Cover, Title/Author/Desc, Metadata, Actions */
+body.longnode .ln-cover-wrapper { order: 1; }
+body.longnode .ln-column-2 { order: 2; }
+body.longnode .ln-column-1-meta { order: 3; }
+body.longnode .ln-column-1-actions { order: 4; }
+
+/* Cover wrapper - mobile centered */
+body.longnode .ln-cover-wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+body.longnode .ln-cover-wrapper .cover {
+    display: inline-block;
+}
+
+body.longnode .ln-cover-wrapper .cover img {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+/* Rating below cover */
+body.longnode .ln-cover-wrapper .rating {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+body.longnode .ln-cover-wrapper .rating p {
+    margin: 0;
+}
+
+body.longnode .ln-cover-wrapper .rating .glyphicon-star,
+body.longnode .ln-cover-wrapper .rating .glyphicon-star-empty {
+    font-size: 1.3em;
+}
+
+/* Column 2: Title, Author, Description */
+body.longnode .ln-column-2 {
+    margin-bottom: 25px;
+}
+
+body.longnode .ln-column-2 h2#title {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+    line-height: 1.3;
+}
+
+body.longnode .ln-column-2 .author {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #555;
+}
+
+body.longnode .ln-column-2 .author a {
+    color: #337ab7;
+}
+
+body.longnode .ln-column-2 .comments {
+    line-height: 1.7;
+    color: #333;
+}
+
+/* Column 1 Metadata section */
+body.longnode .ln-column-1-meta {
+    margin-bottom: 25px;
+}
+
+body.longnode .ln-column-1-meta .series-info {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+body.longnode .ln-column-1-meta .tags,
+body.longnode .ln-column-1-meta .identifiers,
+body.longnode .ln-column-1-meta .publishers,
+body.longnode .ln-column-1-meta .publishing-date,
+body.longnode .ln-column-1-meta .real_custom_columns {
+    margin-bottom: 15px;
+}
+
+body.longnode .ln-column-1-meta .tags p,
+body.longnode .ln-column-1-meta .identifiers p,
+body.longnode .ln-column-1-meta .publishers p,
+body.longnode .ln-column-1-meta .publishing-date p {
+    margin-bottom: 0;
+}
+
+/* Column 1 Actions section */
+body.longnode .ln-column-1-actions {
+    margin-bottom: 20px;
+}
+
+body.longnode .ln-column-1-actions .btn-toolbar {
+    margin-bottom: 15px;
+}
+
+body.longnode .ln-column-1-actions .btn-group {
+    margin-bottom: 10px;
+}
+
+body.longnode .ln-column-1-actions .edit-buttons {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+body.longnode .ln-column-1-actions .edit-buttons .btn-group {
+    margin-right: 10px;
+}
+
+/* Desktop: Two-column layout using flexbox */
+@media (min-width: 992px) {
+    body.longnode .ln-book-grid {
+        display: flex;
+        flex-direction: row; /* Override mobile column direction */
+        gap: 40px;
+        align-items: flex-start;
+    }
+    
+    /* Left column container */
+    body.longnode .ln-left-column {
+        flex: 0 0 clamp(440px, 40%, 600px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* Left column items stack inside the container */
+    body.longnode .ln-cover-wrapper {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+    
+    body.longnode .ln-column-1-meta {
+        margin-bottom: 15px;
+    }
+    
+    body.longnode .ln-column-1-actions {
+        margin-bottom: 0;
+    }
+    
+    /* Right column: takes remaining width */
+    body.longnode .ln-column-2 {
+        flex: 1;
+        min-width: 0; /* Prevent flex item from overflowing */
+        margin-bottom: 0;
+    }
+    
+    /* Tighter spacing for metadata items on desktop */
+    body.longnode .ln-column-1-meta .series-info,
+    body.longnode .ln-column-1-meta .tags,
+    body.longnode .ln-column-1-meta .identifiers,
+    body.longnode .ln-column-1-meta .publishers,
+    body.longnode .ln-column-1-meta .publishing-date,
+    body.longnode .ln-column-1-meta .real_custom_columns {
+        margin-bottom: 10px;
+    }
+    
+    /* Remove margin from last child to avoid double spacing */
+    body.longnode .ln-column-1-meta > *:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Collapse empty metadata section */
+    body.longnode .ln-column-1-meta:empty {
+        display: none;
+        margin: 0;
+    }
+    
+    /* Compact spacing for actions section on desktop */
+    body.longnode .ln-column-1-actions .btn-toolbar {
+        margin-bottom: 10px;
+    }
+    
+    body.longnode .ln-column-1-actions .btn-group {
+        margin-bottom: 5px;
+    }
+    
+    body.longnode .ln-column-1-actions .edit-buttons {
+        margin-top: 10px;
+        padding-top: 10px;
+    }
+    
+    /* Cover image fills the column */
+    body.longnode .ln-cover-wrapper .cover {
+        display: block;
+    }
+    
+    body.longnode .ln-cover-wrapper .cover img {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    /* Larger title on desktop */
+    body.longnode .ln-column-2 h2#title {
+        font-size: 2.5em;
+        margin-bottom: 15px;
+    }
+    
+    body.longnode .ln-column-2 .author {
+        font-size: 1.4em;
+        margin-bottom: 25px;
+    }
+    
+    /* Rating stars slightly larger on desktop */
+    body.longnode .ln-cover-wrapper .rating .glyphicon-star,
+    body.longnode .ln-cover-wrapper .rating .glyphicon-star-empty {
+        font-size: 1.5em;
+    }
+}
+
+/* Large Desktop adjustments */
+@media (min-width: 1200px) {
+    body.longnode .ln-book-grid {
+        gap: 0 50px;
+    }
+    
+    body.longnode .ln-column-2 h2#title {
+        font-size: 2.8em;
+    }
+}
+
+/* ========================================
    Book Detail Page - Hide Sidebar
    ======================================== */
 
