@@ -42,7 +42,25 @@ body.longnode {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     -webkit-font-smoothing: antialiased; /* Chrome + Safari optimization */
     -moz-osx-font-smoothing: grayscale; /* Completeness */
-    text-rendering: optimizeLegibility; /* Better kerning on Safari */
+    text-rendering: optimizeLegibility; /* Better kerning for book titles */
+}
+
+/* ========================================
+   Book Grid Display Improvements
+   ======================================== */
+
+/* Reduce spacing between cover and title (was 20px total, now ~10px) */
+body.longnode .book .cover {
+    margin-bottom: 5px;
+}
+
+body.longnode .book .meta {
+    margin-top: 5px;
+}
+
+/* Hide series info paragraph since we'll append it to title */
+body.longnode .book .meta .series {
+    display: none;
 }
 
 /* ========================================

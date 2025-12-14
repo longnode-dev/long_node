@@ -45,7 +45,7 @@
       </div>
       <div class="meta">
         <a href="{{ url_for('web.show_book', book_id=entry.Books.id) }}" {% if simple==false and g.current_theme != 2 %}data-toggle="modal" data-target="#bookDetailsModal" data-remote="false"{% endif %}>
-          <p title="{{entry.Books.title}}" class="title">{{entry.Books.title|shortentitle}}</p>
+          <p title="{{entry.Books.title}}" class="title">{{entry.Books.title|shortentitle}}{% if g.current_theme == 2 and entry.Books.series.__len__() > 0 %} ({{entry.Books.series_index|formatfloat(2)}}){% endif %}</p>
         </a>
         <p class="author">
           {% for author in entry.Books.authors %}
