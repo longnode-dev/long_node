@@ -502,11 +502,30 @@ body.book.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
     background-color: #f5f5f5;
 }
 
-/* Hide unnecessary items: Browse heading, Shelves heading, Create a Shelf */
+/* Hide unnecessary items: Browse heading, Shelves heading, Create a Shelf, About */
 /* Note: These are also removed/hidden via JavaScript for better reliability */
 body.book.longnode .navbar-collapse .nav-head,
 body.book.longnode .navbar-collapse .create-shelf,
-body.book.longnode .navbar-collapse #nav_createshelf {
+body.book.longnode .navbar-collapse #nav_createshelf,
+body.book.longnode .navbar-collapse #nav_about {
+    display: none !important;
+}
+
+/* Global hiding for Long Node theme - hide Browse, Shelves section, Create a Shelf, and About link */
+body.longnode .navigation .nav-head,
+body.longnode .navigation .public-shelves,
+body.longnode .navigation #nav_createshelf,
+body.longnode .navigation .create-shelf,
+body.longnode .navigation #nav_about {
+    display: none !important;
+}
+
+/* Also hide when moved to hamburger menu by Intention.js */
+body.longnode .navbar-collapse .nav-head,
+body.longnode .navbar-collapse .public-shelves,
+body.longnode .navbar-collapse #nav_createshelf,
+body.longnode .navbar-collapse .create-shelf,
+body.longnode .navbar-collapse #nav_about {
     display: none !important;
 }
 
@@ -661,5 +680,39 @@ body.longnode .ln-tooltip-right::after {
     body.longnode .ln-tooltip::before {
         max-width: 90vw;
         min-width: 200px;
+    }
+}
+
+/* ========================================
+   New Books Page - Month Grouping
+   ======================================== */
+
+body.longnode .new-books-page .month-divider {
+    width: 100%;
+    margin: 35px 0 15px 0;
+    padding: 0;
+}
+
+body.longnode .new-books-page .month-divider:first-of-type {
+    margin-top: 5px;
+}
+
+body.longnode .new-books-page .month-header {
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #555;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin: 0;
+}
+
+/* Responsive adjustments for month headers */
+@media (max-width: 767px) {
+    body.longnode .new-books-page .month-header {
+        font-size: 1.1em;
+    }
+    
+    body.longnode .new-books-page .month-divider {
+        margin: 25px 0 10px 0;
     }
 }

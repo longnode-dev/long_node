@@ -20,9 +20,10 @@ from flask import render_template, g, abort, request
 from flask_babel import gettext as _
 from werkzeug.local import LocalProxy
 from .cw_login import current_user
-from sqlalchemy.sql.expression import or_
+from sqlalchemy.sql.expression import or_, func
+from datetime import datetime, timezone, timedelta
 
-from . import config, constants, logger, ub
+from . import config, constants, logger, ub, calibre_db, db
 from .ub import User
 
 
@@ -38,6 +39,26 @@ def get_sidebar_config(kwargs=None):
     else:
         content = 'conf' in kwargs
     sidebar = list()
+    
+    # Long Node theme: Add "New" entry first (books added in last 90 days)
+    if config.config_theme == 2:
+        cutoff = datetime.now(timezone.utc) - timedelta(days=90)
+        new_count = calibre_db.session.query(db.Books).filter(
+            db.Books.timestamp >= cutoff
+        ).count()
+        
+        sidebar.append({
+            "glyph": "glyphicon-time",
+            "text": f"{_('New')} ({new_count})",
+            "link": 'web.new_books',
+            "id": "newbooks",
+            "visibility": constants.SIDEBAR_RECENT,
+            "public": True,
+            "page": "newbooks",
+            "show_text": _('Show New Books'),
+            "config_show": False
+        })
+    
     sidebar.append({"glyph": "glyphicon-book", "text": _('Books'), "link": 'web.index', "id": "new",
                     "visibility": constants.SIDEBAR_RECENT, 'public': True, "page": "root",
                     "show_text": _('Show recent books'), "config_show":False})
@@ -45,17 +66,17 @@ def get_sidebar_config(kwargs=None):
                     "visibility": constants.SIDEBAR_HOT, 'public': True, "page": "hot",
                     "show_text": _('Show Hot Books'), "config_show": True})
     if current_user.role_admin():
-        sidebar.append({"glyph": "glyphicon-download", "text": _('Downloaded Books'), "link": 'web.download_list',
+        sidebar.append({"glyph": "glyphicon-download", "text": _('Downloaded'), "link": 'web.download_list',
                         "id": "download", "visibility": constants.SIDEBAR_DOWNLOAD, 'public': (not current_user.is_anonymous),
                         "page": "download", "show_text": _('Show Downloaded Books'),
                         "config_show": content})
     else:
-        sidebar.append({"glyph": "glyphicon-download", "text": _('Downloaded Books'), "link": 'web.books_list',
+        sidebar.append({"glyph": "glyphicon-download", "text": _('Downloaded'), "link": 'web.books_list',
                         "id": "download", "visibility": constants.SIDEBAR_DOWNLOAD, 'public': (not current_user.is_anonymous),
                         "page": "download", "show_text": _('Show Downloaded Books'),
                         "config_show": content})
     sidebar.append(
-        {"glyph": "glyphicon-star", "text": _('Top Rated Books'), "link": 'web.books_list', "id": "rated",
+        {"glyph": "glyphicon-star", "text": _('Top Rated'), "link": 'web.books_list', "id": "rated",
          "visibility": constants.SIDEBAR_BEST_RATED, 'public': True, "page": "rated",
          "show_text": _('Show Top Rated Books'), "config_show": True})
     sidebar.append({"glyph": "glyphicon-eye-open", "text": _('Read Books'), "link": 'web.books_list', "id": "read",
@@ -71,6 +92,32 @@ def get_sidebar_config(kwargs=None):
     sidebar.append({"glyph": "glyphicon-inbox", "text": _('Categories'), "link": 'web.category_list', "id": "cat",
                     "visibility": constants.SIDEBAR_CATEGORY, 'public': True, "page": "category",
                     "show_text": _('Show Category Section'), "config_show": True})
+    
+    # Long Node theme: Add "Read Next" shortcut after Categories
+    if config.config_theme == 2:
+        read_next_tag = calibre_db.session.query(db.Tags).filter(
+            func.lower(db.Tags.name) == 'read next'
+        ).first()
+        
+        if read_next_tag:
+            read_next_count = calibre_db.session.query(db.Books).join(
+                db.books_tags_link
+            ).join(db.Tags).filter(
+                db.Tags.id == read_next_tag.id
+            ).count()
+            
+            sidebar.append({
+                "glyph": "glyphicon-arrow-right",
+                "text": f"{_('Read Next')} ({read_next_count})",
+                "link": 'web.read_next',
+                "id": "readnext",
+                "visibility": constants.SIDEBAR_CATEGORY,
+                "public": True,
+                "page": "readnext",
+                "show_text": _('Show Read Next'),
+                "config_show": False
+            })
+    
     sidebar.append({"glyph": "glyphicon-bookmark", "text": _('Series'), "link": 'web.series_list', "id": "serie",
                     "visibility": constants.SIDEBAR_SERIES, 'public': True, "page": "series",
                     "show_text": _('Show Series Section'), "config_show": True})
@@ -97,11 +144,22 @@ def get_sidebar_config(kwargs=None):
          "show_text": _('Show Archived Books'), "config_show": content})
     if not simple:
         sidebar.append(
-            {"glyph": "glyphicon-th-list", "text": _('Books List'), "link": 'web.books_table', "id": "list",
+            {"glyph": "glyphicon-th-list", "text": _('List'), "link": 'web.books_table', "id": "list",
              "visibility": constants.SIDEBAR_LIST, 'public': (not current_user.is_anonymous), "page": "list",
              "show_text": _('Show Books List'), "config_show": content})
     g.shelves_access = ub.session.query(ub.Shelf).filter(
         or_(ub.Shelf.is_public == 1, ub.Shelf.user_id == current_user.id)).order_by(ub.Shelf.name).all()
+
+    # Long Node theme: Add counts to Books and Authors entries
+    if config.config_theme == 2:
+        books_count = calibre_db.session.query(db.Books).count()
+        authors_count = calibre_db.session.query(db.Authors).count()
+        
+        for item in sidebar:
+            if item['id'] == 'new':  # Books entry
+                item['text'] = f"{_('Books')} ({books_count:,})"
+            elif item['id'] == 'author':
+                item['text'] = f"{_('Authors')} ({authors_count:,})"
 
     return sidebar, simple
 

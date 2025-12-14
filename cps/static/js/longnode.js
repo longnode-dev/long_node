@@ -24,10 +24,11 @@
                     sidebarNav.removeAttr('id');
                     sidebarNav.addClass('nav navbar-nav longnode-sidebar-clone');
                     
-                    // Remove unnecessary items: Browse heading, Shelves heading, Create a Shelf
+                    // Remove unnecessary items: Browse heading, Shelves heading, Create a Shelf, About
                     sidebarNav.find('.nav-head').remove();
                     sidebarNav.find('.create-shelf').remove();
                     sidebarNav.find('#nav_createshelf').remove();
+                    sidebarNav.find('#nav_about').remove();
                     
                     $('.navbar-collapse').append(sidebarNav);
                 }
@@ -39,6 +40,7 @@
                 movedNav.find('.nav-head').hide();
                 movedNav.find('.create-shelf').hide();
                 movedNav.find('#nav_createshelf').hide();
+                movedNav.find('#nav_about').hide();
             }
         }
     });

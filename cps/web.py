@@ -812,6 +812,50 @@ def index(page):
     return render_books_list("newest", sort_param, 1, page)
 
 
+@web.route("/new", defaults={'page': 1})
+@web.route('/new/page/<int:page>')
+@login_required_if_no_ano
+def new_books(page):
+    """Show books added in trailing year, grouped by month (Long Node theme feature)."""
+    from datetime import datetime, timedelta, timezone
+    
+    # Get books from last 365 days, ordered by timestamp descending
+    cutoff = datetime.now(timezone.utc) - timedelta(days=365)
+    
+    entries, random, pagination = calibre_db.fill_indexpage(
+        page, 0,
+        db.Books,
+        db.Books.timestamp >= cutoff,
+        [db.Books.timestamp.desc()],
+        True, config.config_read_column
+    )
+    
+    return render_title_template(
+        'new_books.html',
+        entries=entries,
+        pagination=pagination,
+        title=_("New Books"),
+        page="newbooks"
+    )
+
+
+@web.route("/readnext")
+@login_required_if_no_ano
+def read_next():
+    """Shortcut to 'read next' tag category page (Long Node theme feature)."""
+    from sqlalchemy.sql.expression import func
+    
+    read_next_tag = calibre_db.session.query(db.Tags).filter(
+        func.lower(db.Tags.name) == 'read next'
+    ).first()
+    
+    if read_next_tag:
+        return redirect(url_for('web.books_list', data='category', sort_param='stored', book_id=read_next_tag.id))
+    else:
+        flash(_("'Read Next' tag not found"), category="warning")
+        return redirect(url_for('web.index'))
+
+
 @login_required_if_no_ano
 def books_list(data, sort_param, book_id, page):
     return render_books_list(data, sort_param, book_id, page)

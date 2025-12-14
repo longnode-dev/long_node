@@ -36,7 +36,6 @@ client_secrets.json
 gmail.json
 /.key
 .cursor/
-.cursorrules
 
 # Visual regression testing (Playwright)
 test/playwright/

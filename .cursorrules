@@ -1,0 +1,200 @@
+# Calibre-Web Project Rules
+
+## FAST DEVELOPMENT LOOP (CRITICAL)
+- **NO AUTO-RELOAD**: This app uses Tornado/Gevent. Flask auto-reload **DOES NOT WORK**.
+- **ALWAYS RESTART SERVER**: After ANY code or template change, restart the python process:
+  ```powershell
+  Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep 2; cd c:\github\long_node\repo; Start-Process -FilePath "venv\Scripts\python.exe" -ArgumentList "cps.py" -WindowStyle Minimized
+  ```
+- **BROWSER ROOLS FOR VERIFICATION**: You have access to both `cursor-ide-browser-browser_navigate` and `puppeteer` to test changes. Both browsers maintain session, so login once with cursor/longnode123 then verify any page. The accessibility tree view for cursor-ide-browser is very limited and doesn't allow a visual bitmap screenshot, so for layout issues you will need to use puppeteer.
+- **AVOID Invoke-WebRequest FOR AUTH PAGES**: It has no session. Use built-in browser instead.
+- **NEVER BLAME USER CACHE**: User already uses Ctrl+F5. If changes aren't visible after server restart, the code is wrong.
+
+## CRITICAL SAFETY RULE - ENFORCE STRICTLY
+**NEVER write, modify, or delete files outside of `c:\github\`**
+- **ABSOLUTELY FORBIDDEN**: Writing to `B:\` or any mapped network drives
+- **ABSOLUTELY FORBIDDEN**: Writing to any path outside `c:\github\`
+- **ONLY ALLOWED**: Read operations from network drives (B:\, etc.) for accessing data
+- **ONLY ALLOWED**: Write operations within `c:\github\long_node\` and subdirectories
+- Before any file write operation, verify the target path starts with `c:\github\`
+- If a user requests writing outside `c:\github\`, explain it's blocked for safety and suggest alternatives
+
+## Project Intent
+Long Node is a heavily customized fork of Calibre-Web (`janeczku/calibre-web`).
+
+Primary goals:
+- Preserve Calibre-Web's core functionality and data model
+- Significantly improve UI, UX, and selected behaviors
+- Maintain a fast local development loop
+- Deploy reliably to a Synology NAS using Docker
+- Avoid data corruption and production instability
+- Keep changes well-structured and reversible
+
+This project is **not** a rewrite. It is a layered evolution.
+
+## Project Structure
+- Main entry point: `cps.py` (runs `cps.main.main()`)
+- Application code: `cps/` directory
+- Default port: 8083
+- Default admin credentials: admin/admin123
+- Database location: Can be configured in admin interface
+
+## Key Configuration
+- Python version required: 3.7+ (currently using 3.11.9)
+- Main dependencies: Flask, SQLAlchemy, Tornado, Wand (for ImageMagick)
+- Database: Uses Calibre metadata.db file
+- Sample database: https://github.com/janeczku/calibre-web/raw/master/library/metadata.db
+- Upstream source: https://github.com/janeczku/calibre-web
+- Upstream issues: https://github.com/janeczku/calibre-web/issues (search here for common bugs/solutions)
+- License: GPL-3.0 (must remain)
+
+## Important Paths
+- Project root: `c:\github\long_node\repo`
+- Parent directory (for dev files): `c:\github\long_node\`
+- Use relative paths `../` to access parent directory files
+- Network drive B:\ is mapped to `\\192.168.0.10\Media\Books\calibre` (READ-ONLY for development)
+- Production data on NAS: `/volume1/Media/Books/calibre` (treat as read-mostly)
+
+## Data Safety Rules (Critical)
+- Never mount production `metadata.db` over SMB/NFS for dev writes
+- Never allow dev instance to write to production DB
+- All DB testing uses copied files
+- Keep rolling backups of `metadata.db` (minimum last 5 versions)
+- If schema behavior is unclear, test against a throwaway copy
+- Data integrity > speed
+
+## Development vs Production Model
+
+### Development (Local Windows)
+- Runs directly via Python (not Docker)
+- Uses copied data only
+- Never writes to production database
+- Fast reload / edit / refresh loop
+- Virtual environment: `venv\` in project root
+
+### Production (Synology NAS)
+- Runs via Docker
+- Uses LinuxServer container model
+- Books + DB live under: `/volume1/Media/Books/calibre`
+- Config volume: `/volume1/docker/calibre-web/config`
+
+Production data must be treated as **read-mostly** during development.
+
+## Running the Application
+- Command: `venv\Scripts\python.exe cps.py` (from repo directory)
+- Access: http://localhost:8083
+- OPDS feed: http://localhost:8083/opds
+- Virtual environment activation: `venv\Scripts\Activate.ps1`
+
+## Setup Steps
+1. Create virtual environment: `python -m venv venv`
+2. Activate: `venv\Scripts\Activate.ps1`
+3. Install requirements: `pip install -r requirements.txt`
+4. Run: `python cps.py`
+5. Access via browser at http://localhost:8083
+6. Login with cursor/longnode123
+
+## Dependencies
+- ImageMagick: Required for cover extraction from EPUBs
+- Ghostscript: May be needed for PDF cover extraction on Windows
+- Calibre desktop: Optional, for on-the-fly conversion
+
+## Development Rules
+- Git commits: Use multiple -m flags for multi-line messages PowerShell does not support HEREDOC/<<EOF syntax
+- Generate detailed commit messages automatically
+- Suggest commits after major milestones
+- Ask before pushing to remote
+- Separate UI changes from behavior changes
+- Document any deviation from upstream behavior
+- Keep diffs readable to ease upstream rebases
+- Avoid "clever" refactors without measurable benefit
+- If we find a bug, create a regression test for it
+
+## File Organization Rules
+- **NEVER create files in project root** unless explicitly required by the project structure
+- **Documentation, notes, temp files, summaries** → Place in `.cursor/` folder
+- **Test dependencies, configs** → Place in `.cursor/` folder
+- **Only create files in root** if they are part of the actual project (like `requirements.txt`, `cps.py`, etc.)
+- When in doubt, ask before creating files in root
+
+## Interaction Rules
+- **When user asks "what" or "how" questions** → Provide information/advice, but **ASK before implementing**
+- **When user asks "can you" or "please"** → This is a request to implement, proceed
+- **Always confirm scope** before implementing large changes
+- **Don't burn tokens** implementing solutions to "what" questions without confirmation
+
+## Non-Goals
+- Do not modify Calibre's underlying database schema
+- Do not tightly couple code to Synology-specific paths
+- Do not assume always-on internet access
+- Do not break compatibility with upstream updates unless explicitly documented
+
+## Theme System
+
+### How Themes Work
+This application supports multiple themes that users can select:
+- **Theme 0**: Standard Theme (upstream Calibre-Web default)
+- **Theme 2**: Long Node Theme (our primary custom theme)
+
+### Theme Implementation
+- Theme selection stored in database: `config.config_theme` (integer: 0, 1, or 2)
+- Theme value exposed in templates via `g.current_theme` (set in `cps/admin.py:120`)
+- Theme-specific assets loaded conditionally in `cps/templates/layout.html`:
+  - Theme 2: `css/longnode.css`, `js/longnode.js`
+- Body class includes theme identifier: `body.longnode`
+
+### Theme-Specific Code Patterns
+Use Jinja2 conditionals to isolate theme-specific changes:
+```jinja2
+{% if g.current_theme == 2 %}
+  <!-- Long Node Theme specific code -->
+{% endif %}
+```
+
+Or in CSS/JS, target theme-specific body classes:
+```css
+body.longnode .navbar-brand {
+  /* Long Node specific styles */
+}
+```
+
+### CRITICAL: Default Theme Scope Rule
+**By default, ALWAYS assume UI/UX changes apply ONLY to Long Node Theme (theme 2).**
+
+- **Before implementing**: If a change would affect themes 0 or 1, **STOP and ask for explicit confirmation**
+- **When in doubt**: Scope the change to theme 2 only using conditionals
+- **Rationale**: We want to preserve upstream compatibility (theme 0) and not break existing caliBlur theme (theme 1)
+
+### CRITICAL: Template Routing for Long Node Theme
+**Long Node Theme uses DIFFERENT templates than other themes.** Check `cps/web.py` for routing logic.
+
+Key template routing (from `web.py`):
+- **Book Detail Page**: 
+  - Long Node (theme 2) → `book_detail.html`
+  - Other themes → `detail.html`
+  
+**BEFORE editing any template for Long Node Theme:**
+1. Check `web.py` for `config.config_theme == 2` conditionals
+2. Identify which template is actually used for the target page
+3. NEVER assume `detail.html` is correct - verify the actual template file
+
+This routing exists because Long Node uses full-page layouts while other themes use modals.
+
+### CRITICAL: Debugging When Changes Don't Appear
+**NEVER assume browser caching is the problem.** User uses Ctrl+F5 and has proven caching is almost never the issue.
+
+**When changes don't appear after server restart, assume YOU ARE EDITING THE WRONG FILE:**
+
+1. **Trace the code path**: Find the Flask route in `web.py` or relevant blueprint
+2. **Check for conditional template selection**: Look for `if config.config_theme == 2` or similar
+3. **Verify which file is actually rendered**: The route's `render_template()` call tells you the real file
+4. **Search for multiple similar files**: Use `Glob` to find all files with similar names (e.g., `*detail*.html`)
+
+**First principles debugging order:**
+1. Wrong file being edited (MOST COMMON)
+2. Template conditional not matching (e.g., `g.current_theme` check failing)
+3. Syntax error causing silent fallback
+4. Server not actually restarted
+5. Browser caching (LEAST LIKELY - check last)
+
+**Cost of wrong assumption**: Editing the wrong file wastes tokens and time. Always verify the file path before making extensive changes.
