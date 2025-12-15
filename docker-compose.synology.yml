@@ -1,0 +1,55 @@
+# Calibre-Web Long Node - Synology Docker Compose Reference
+# This file documents the correct configuration for Synology deployment
+# Copy these settings into Portainer or use via docker-compose
+
+version: "2.1"
+
+services:
+  calibre-web:
+    image: longnode/calibre-web-longnode:latest
+    container_name: calibre-web
+    
+    # Environment variables for user permissions and timezone
+    environment:
+      - PUID=1027              # User: Waqas Ahmed (must match Synology user)
+      - PGID=100               # Group: users
+      - TZ=America/Los_Angeles # Timezone
+    
+    # Volume mounts
+    volumes:
+      # Config volume: Contains app settings, user database, theme config
+      # CRITICAL: Never delete this, contains all your settings
+      - /volume1/docker/calibre-web/config:/config
+      
+      # Books volume: Your Calibre library
+      - /volume1/Media/Books/calibre:/books
+    
+    # Port mapping (must match for Cloudflare Tunnel)
+    ports:
+      - 8083:8083
+    
+    # Network configuration
+    # CRITICAL: Must be on calibre-web_default for Cloudflare Tunnel connectivity
+    networks:
+      - calibre-web_default
+    
+    # Restart policy
+    restart: unless-stopped
+
+# Network configuration
+# Use existing network that cloudflared container is on
+networks:
+  calibre-web_default:
+    external: true
+
+# Optional: Watchtower for automatic updates
+# Uncomment after first successful deployment
+#  watchtower:
+#    image: containrrr/watchtower
+#    container_name: watchtower
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    environment:
+#      - WATCHTOWER_POLL_INTERVAL=300  # Check every 5 minutes
+#      - WATCHTOWER_CLEANUP=true       # Remove old images
+#    restart: unless-stopped

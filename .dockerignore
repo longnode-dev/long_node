@@ -1,0 +1,64 @@
+# Development environment
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Git
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cursor/
+
+# Project documentation and rules (not needed in container)
+.cursorrules
+.editorconfig
+.eslintrc
+README.md
+CONTRIBUTING.md
+SECURITY.md
+LICENSE
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# CI/CD
+.github/
+qodana.yaml
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Deployment files (already have code, don't need these)
+Dockerfile
+.dockerignore
+docker-compose*.yml
+build-and-push.ps1
+
+# Exclude files
+exclude.txt
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
