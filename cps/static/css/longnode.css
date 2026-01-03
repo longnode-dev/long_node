@@ -1048,6 +1048,26 @@ body.longnode .container-fluid {
     }
 }
 
+/* ========================================
+   Kindle (Theme 2) - Multi-book Grid Fix
+   ======================================== */
+
+/* Kindle browsers can mis-apply media queries; ensure multi-book pages don't inherit mobile centering.
+   IMPORTANT: This targets theme 2 only via body.longnode + the injected .kindle class. */
+body.longnode.kindle:not(.book) .row.display-flex {
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Force 3 columns on Kindle by overriding Bootstrap's col-xs-6 (50%) just for book tiles.
+   We avoid touching covers/images to prevent aspect ratio regressions. */
+body.longnode.kindle:not(.book) .row.display-flex > .book.col-xs-6 {
+    width: 33.33333333% !important;
+}
+
 /* Sidebar nav container */
 body.longnode .navigation {
     background-color: var(--ln-sidebar-bg);

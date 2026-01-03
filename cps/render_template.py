@@ -29,6 +29,17 @@ from .ub import User
 
 log = logger.create()
 
+def is_kindle_client(user_agent: str) -> bool:
+    ua = (user_agent or "").lower()
+    # Kindle Paperwhite browser commonly includes "Kindle" and/or "Silk".
+    # Also include Fire OS device tokens as a fallback.
+    kindle_markers = (
+        "kindle",
+        "silk",
+        "kfap", "kftr", "kftt", "kfjwa", "kfjwi", "kfsow", "kfsowi", "kfdow", "kfdowi",
+    )
+    return any(marker in ua for marker in kindle_markers)
+
 def get_sidebar_config(kwargs=None):
     kwargs = kwargs or []
     simple = bool([e for e in ['kindle', 'tolino', "kobo", "bookeen"]
@@ -167,8 +178,10 @@ def get_sidebar_config(kwargs=None):
 # Returns the template for rendering and includes the instance name
 def render_title_template(*args, **kwargs):
     sidebar, simple = get_sidebar_config(kwargs)
+    kindle = is_kindle_client(request.headers.get('User-Agent', ""))
     try:
         return render_template(instance=config.config_calibre_web_title, sidebar=sidebar, simple=simple,
+                               is_kindle=kindle,
                                accept=config.config_upload_formats.split(','),
                                *args, **kwargs)
     except PermissionError:

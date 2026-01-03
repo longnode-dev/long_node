@@ -39,7 +39,7 @@
        <script src="{{ url_for('static', filename='js/longnode.js') }}" defer></script>
     {% endif %}
   </head>
-  <body class="{{ page }} {{ bodyClass }}{% if g.current_theme == 1 %} blur{% elif g.current_theme == 2 %} longnode{% endif %}" data-text="{{_('Home')}}" data-textback="{{_('Back')}}">
+  <body class="{{ page }} {{ bodyClass }}{% if g.current_theme == 1 %} blur{% elif g.current_theme == 2 %} longnode{% if is_kindle %} kindle{% endif %}{% endif %}" data-text="{{_('Home')}}" data-textback="{{_('Back')}}">
     <!-- Static navbar -->
     <div class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container-fluid">
