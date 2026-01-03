@@ -470,11 +470,23 @@ body.book.longnode .book-detail-bottom-actions .btn {
    Book Detail Page - Compact Navbar
    ======================================== */
 
-/* Always show hamburger menu on book detail page */
-body.book.longnode .navbar-toggle {
-    display: block !important;
-    float: left;
-    margin-left: 15px;
+/* Always show hamburger menu on book detail page - desktop only uses left float */
+@media (min-width: 768px) {
+    body.book.longnode .navbar-toggle {
+        display: block !important;
+        float: left;
+        margin-left: 15px;
+    }
+}
+
+/* Mobile book detail: use same layout as other pages (title left, icons right) */
+@media (max-width: 767px) {
+    body.book.longnode .navbar-toggle {
+        display: block !important;
+        float: right; /* Same as other pages */
+        margin-right: 15px;
+        margin-left: 0;
+    }
 }
 
 /* Make navbar-collapse a dropdown overlay instead of pushing content */
@@ -952,40 +964,37 @@ body.longnode .container-fluid {
     }
 }
 
-/* Mobile: restore container padding - reduced for more content above fold */
+/* Mobile: reduced vertical spacing for more content above fold */
 @media (max-width: 767px) {
+    /* Container padding */
     body.longnode .container-fluid {
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-top: 8px; /* Reduced from 15px */
+        padding-top: 8px;
     }
     
-    /* Reduce heading margins for denser layout */
+    /* Reduce heading margins */
     body.longnode .discover h2,
     body.longnode h2 {
-        margin-top: 10px; /* Reduced from ~20px */
-        margin-bottom: 8px; /* Reduced from ~20px */
+        margin-top: 10px;
+        margin-bottom: 8px;
     }
     
     /* Reduce book card top margin */
     body.longnode .container-fluid .book {
-        margin-top: 12px; /* Reduced from 20px */
+        margin-top: 12px;
     }
     
-    /* Center book grid for symmetric left/right spacing (Option C) */
-    body.longnode .row.display-flex {
-        justify-content: center;
-    }
-    
-    /* Allow books to use slightly more width for better visual balance */
-    body.longnode .container-fluid .book {
-        max-width: 47%; /* Up from fixed 180px, allows better fill */
-        flex: 0 0 47%; /* Consistent sizing */
-    }
-    
-    /* Slightly taller covers for iPhone Pro Max */
+    /* Taller covers for iPhone Pro Max */
     body.longnode .container-fluid .book .cover {
-        height: 180px; /* Up from 150px in caliBlur mobile */
+        height: 210px;
+    }
+    
+    /* Center the book grid: use auto margins on a constrained-width row */
+    body.longnode .row.display-flex {
+        max-width: 370px; /* 2 books (180px) + gap */
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 }
 
@@ -1094,6 +1103,68 @@ body.longnode .book .cover img {
 body.longnode .navbar-collapse {
     background-color: var(--ln-sidebar-bg);
     border-color: #444;
+}
+
+/* Mobile: prevent hamburger menu flickering - use same approach as book detail page */
+@media (max-width: 767px) {
+    body.longnode .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    /* Use explicit display control instead of Bootstrap height animation */
+    body.longnode .navbar-collapse.collapse {
+        display: none !important;
+        height: auto !important;
+    }
+    
+    body.longnode .navbar-collapse.collapse.in {
+        display: block !important;
+    }
+    
+    /* Disable the collapsing animation entirely */
+    body.longnode .navbar-collapse.collapsing {
+        display: block !important;
+        height: auto !important;
+        transition: none !important;
+    }
+    
+    /* Make nav items vertical list */
+    body.longnode .navbar-collapse .navbar-nav {
+        float: none !important;
+        margin: 0;
+    }
+    
+    body.longnode .navbar-collapse .navbar-nav > li {
+        float: none !important;
+        display: block !important;
+    }
+    
+    body.longnode .navbar-collapse .navbar-nav > li > a {
+        padding: 10px 20px;
+        display: block;
+    }
+    
+    /* Active/selected state in hamburger menu - amber accent */
+    body.longnode .navbar-collapse .navbar-nav > li.active > a,
+    body.longnode .navbar-collapse .navbar-nav > li > a.active,
+    body.longnode .navbar-collapse #scnd-nav > li.active > a {
+        background-color: var(--ln-accent) !important;
+        color: var(--ln-topnav-bg) !important;
+        font-weight: 600;
+    }
+    
+    body.longnode .navbar-collapse .navbar-nav > li.active > a .glyphicon,
+    body.longnode .navbar-collapse #scnd-nav > li.active > a .glyphicon {
+        color: var(--ln-topnav-bg) !important;
+    }
 }
 
 body.longnode .navbar-collapse .navbar-nav > li > a {
@@ -1208,35 +1279,36 @@ body.book.longnode .navbar-collapse .longnode-sidebar-clone li a .glyphicon {
    Mobile Search Toggle (iPhone Pro Max)
    ======================================== */
 
-/* Search toggle button - only visible on mobile */
+/* Search toggle button - hidden on desktop */
 body.longnode .ln-search-toggle {
-    display: none; /* Hidden on desktop */
+    display: none;
 }
 
 @media (max-width: 767px) {
-    /* Show search toggle button on mobile */
+    /* Show search toggle on mobile - explicit display to override Bootstrap */
     body.longnode .ln-search-toggle {
-        display: block;
+        display: block !important;
         float: right;
         background: transparent;
         border: 1px solid var(--ln-text-dim);
         border-radius: 4px;
+        /* Match Bootstrap navbar-toggle exactly */
         padding: 9px 10px;
         margin-top: 8px;
-        margin-right: 10px;
-        cursor: pointer;
-        transition: background-color 0.15s ease, border-color 0.15s ease;
+        margin-right: 15px;
+        margin-bottom: 8px;
     }
     
     body.longnode .ln-search-toggle .glyphicon {
         color: var(--ln-text-light);
         font-size: 14px;
+        display: block;
+        line-height: 1;
     }
     
     body.longnode .ln-search-toggle:hover,
     body.longnode .ln-search-toggle:focus {
         background-color: var(--ln-hover-bg);
-        border-color: var(--ln-text-light);
         outline: none;
     }
     

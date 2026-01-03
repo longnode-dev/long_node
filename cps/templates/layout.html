@@ -44,17 +44,17 @@
     <div class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          {% if g.current_theme == 2 %}
-          <button type="button" class="ln-search-toggle" id="ln-search-toggle" aria-label="{{_('Toggle Search')}}">
-            <span class="glyphicon glyphicon-search"></span>
-          </button>
-          {% endif %}
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">{{_('Toggle Navigation')}}</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
+          {% if g.current_theme == 2 %}
+          <button type="button" class="ln-search-toggle navbar-toggle" id="ln-search-toggle" aria-label="{{_('Toggle Search')}}">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+          {% endif %}
           <a class="navbar-brand" href="{{url_for('web.index')}}"{% if g.current_theme == 2 %} title="Long Node Theme"{% endif %}>{{instance}}</a>
         </div>
         {% if g.current_theme == 1 %}
