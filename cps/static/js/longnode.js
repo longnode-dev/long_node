@@ -7,6 +7,27 @@
     // Long Node Theme initialization
     console.log('Long Node Theme loaded');
     
+    // Mobile search toggle functionality
+    $(document).ready(function() {
+        if ($('body').hasClass('longnode')) {
+            var $searchToggle = $('#ln-search-toggle');
+            var $searchForm = $('#ln-search-form');
+            
+            if ($searchToggle.length && $searchForm.length) {
+                $searchToggle.on('click', function(e) {
+                    e.preventDefault();
+                    $searchToggle.toggleClass('active');
+                    $searchForm.toggleClass('ln-search-expanded');
+                    
+                    // Focus input when expanding
+                    if ($searchForm.hasClass('ln-search-expanded')) {
+                        $searchForm.find('#query').focus();
+                    }
+                });
+            }
+        }
+    });
+    
     // For book detail page: ensure sidebar items are in hamburger menu
     $(document).ready(function() {
         if ($('body').hasClass('book') && $('body').hasClass('longnode')) {
