@@ -384,11 +384,17 @@ $(function() {
         });
     }
 
-    $(".discover .row").isotope({
-        // options
-        itemSelector : ".book",
-        layoutMode : "fitRows"
-    });
+    // Isotope initialization:
+    // - Long Node theme uses flexbox for grid layout, which conflicts with Isotope's
+    //   transform-based positioning. Skip Isotope entirely for Long Node.
+    // - Other themes: keep Isotope for masonry/fitRows layout.
+    if (!$("body").hasClass("longnode")) {
+        $(".discover .row").isotope({
+            // options
+            itemSelector : ".book",
+            layoutMode : "fitRows"
+        });
+    }
 
     if ($(".load-more").length && $(".next").length) {
         var $loadMore = $(".load-more .row").infiniteScroll({
@@ -406,7 +412,10 @@ $(function() {
                 $(" a:not(.dropdown-toggle) ")
                   .removeAttr("data-toggle");
             }
-            $(".load-more .row").isotope( "appended", $(data), null );
+            // Long Node: skip Isotope append (flexbox handles layout)
+            if (!$("body").hasClass("longnode")) {
+                $(".load-more .row").isotope( "appended", $(data), null );
+            }
         });
 
         // fix for infinite scroll on CaliBlur Theme (#981)
@@ -825,9 +834,22 @@ $(function() {
         }
     });
 
-    $(window).resize(function() {
-        $(".discover .row").isotope("layout");
-    });
+    // Isotope relayout on resize:
+    // - Non-Long Node themes: keep legacy behavior (layout on every resize)
+    // - Long Node theme: skip Isotope relayout entirely on resize.
+    //   Long Node uses flexbox (.row.display-flex) for responsive grid layout,
+    //   which conflicts with Isotope's transform-based positioning. Calling
+    //   isotope("layout") causes visible jumping as the two systems fight.
+    //   Flexbox handles responsive layout natively, so no relayout is needed.
+    (function() {
+        var isLongNode = $("body").hasClass("longnode");
+        if (!isLongNode) {
+            $(window).resize(function() {
+                $(".discover .row").isotope("layout");
+            });
+        }
+        // Long Node: no resize handler - flexbox handles layout
+    })();
 
     $("#import_ldap_users").click(function() {
         $("#DialogHeader").addClass("hidden");

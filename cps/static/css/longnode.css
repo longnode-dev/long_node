@@ -63,6 +63,21 @@ body.longnode .container-fluid .book {
 /* Reduce spacing between cover and title (was 20px total, now ~10px) */
 body.longnode .book .cover {
     margin-bottom: 5px;
+    /* Remove fixed height - let image determine height to preserve aspect ratio */
+    height: auto;
+}
+
+/* Book cover images - ALWAYS preserve aspect ratio (never squish/stretch) */
+body.longnode .book .cover span.img {
+    position: relative;
+    height: auto;
+    display: block;
+}
+
+body.longnode .book .cover span.img img {
+    width: 100%;
+    height: auto;
+    position: relative;
 }
 
 body.longnode .book .meta {
@@ -481,23 +496,86 @@ body.book.longnode .book-detail-bottom-actions .btn {
    Book Detail Page - Compact Navbar
    ======================================== */
 
-/* Always show hamburger menu on book detail page - desktop only uses left float */
-@media (min-width: 768px) {
-    body.book.longnode .navbar-toggle {
-        display: block !important;
-        float: left;
-        margin-left: 15px;
-    }
+/* Book detail page: ALWAYS use mobile-style navbar (logo left, icons right)
+   regardless of viewport width. This provides a consistent, clean layout.
+   
+   IMPORTANT: We must duplicate ALL the mobile styling here (not just display/float)
+   because the mobile styles are inside @media (max-width: 767px) and won't apply
+   on wider viewports. */
+
+/* Book detail page: force navbar-header to be full width so icons align to right edge */
+body.book.longnode .navbar-header {
+    width: 100%;
+    float: none;
 }
 
-/* Mobile book detail: use same layout as other pages (title left, icons right) */
-@media (max-width: 767px) {
-    body.book.longnode .navbar-toggle {
-        display: block !important;
-        float: right; /* Same as other pages */
-        margin-right: 15px;
-        margin-left: 0;
-    }
+/* Book detail page: hide the inline search form, use search toggle instead */
+body.book.longnode .navbar-form.navbar-left {
+    display: none !important;
+}
+
+/* Book detail page: hide the navbar-collapse content on all viewports (use hamburger) */
+body.book.longnode .navbar-collapse.collapse:not(.in) {
+    display: none !important;
+}
+
+/* Book detail page: hamburger - FULL mobile styling on all viewports */
+body.book.longnode .navbar-toggle {
+    display: block !important;
+    float: right;
+    margin-top: 8px;
+    margin-right: 15px;
+    margin-bottom: 8px;
+    margin-left: 0;
+    padding: 9px 10px;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid var(--ln-text-dim);
+    border-radius: 4px;
+}
+
+body.book.longnode .navbar-toggle .icon-bar {
+    background-color: var(--ln-text-light);
+}
+
+body.book.longnode .navbar-toggle:hover,
+body.book.longnode .navbar-toggle:focus {
+    background-color: var(--ln-hover-bg);
+}
+
+/* Book detail page: search toggle - FULL mobile styling on all viewports */
+body.book.longnode .ln-search-toggle {
+    display: block !important;
+    float: right;
+    background: transparent;
+    border: 1px solid var(--ln-text-dim);
+    border-radius: 4px;
+    padding: 9px 10px;
+    margin-top: 8px;
+    margin-right: 15px;
+    margin-bottom: 8px;
+}
+
+body.book.longnode .ln-search-toggle .glyphicon {
+    color: var(--ln-text-light);
+    font-size: 14px;
+    display: block;
+    line-height: 1;
+}
+
+body.book.longnode .ln-search-toggle:hover,
+body.book.longnode .ln-search-toggle:focus {
+    background-color: var(--ln-hover-bg);
+    outline: none;
+}
+
+body.book.longnode .ln-search-toggle.active {
+    background-color: var(--ln-accent);
+    border-color: var(--ln-accent);
+}
+
+body.book.longnode .ln-search-toggle.active .glyphicon {
+    color: var(--ln-topnav-bg);
 }
 
 /* Make navbar-collapse a dropdown overlay instead of pushing content */
@@ -589,13 +667,7 @@ body.longnode .navbar-collapse #nav_about {
     display: none !important;
 }
 
-/* Adjust search bar position for hamburger on left - only on larger viewports */
-/* On mobile, search bar stacks below so no indent needed */
-@media (min-width: 768px) {
-    body.book.longnode .navbar-form.navbar-left {
-        margin-left: 50px;
-    }
-}
+/* Note: Book detail page hides inline search form entirely (see above) */
 
 /* ========================================
    Book Cover Tooltips
@@ -1033,10 +1105,8 @@ body.longnode .container-fluid {
         margin-top: 12px;
     }
     
-    /* Taller covers for iPhone Pro Max */
-    body.longnode .container-fluid .book .cover {
-        height: 210px;
-    }
+    /* Book covers - height auto to preserve aspect ratio (no fixed height) */
+    /* The width is constrained by column, height adjusts automatically */
     
     /* Center the book grid: use auto margins on a constrained-width row */
     body.longnode .row.display-flex {
@@ -1263,6 +1333,13 @@ body.longnode .navbar-collapse .longnode-sidebar-clone li a:hover {
 /* Divider line in dropdown */
 body.longnode .navbar-collapse .longnode-sidebar-clone {
     border-top-color: #444;
+}
+
+/* Hide cloned sidebar items on desktop - they should only show in mobile hamburger menu */
+@media (min-width: 768px) {
+    body.longnode:not(.book) .navbar-collapse .longnode-sidebar-clone {
+        display: none !important;
+    }
 }
 
 /* ----------------------------------------

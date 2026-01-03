@@ -6,7 +6,11 @@
   ```powershell
   Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep 2; cd c:\github\long_node\repo; Start-Process -FilePath "venv\Scripts\python.exe" -ArgumentList "cps.py" -WindowStyle Minimized
   ```
-- **BROWSER ROOLS FOR VERIFICATION**: You have access to both `cursor-ide-browser-browser_navigate` and `puppeteer` to test changes. Both browsers maintain session, so login once with cursor/longnode123 then verify any page. The accessibility tree view for cursor-ide-browser is very limited and doesn't allow a visual bitmap screenshot, so for layout issues you will need to use puppeteer.
+- **BROWSER TOOLS FOR VERIFICATION**: 
+1. MCP tool for `chrome-devtools-mcp`
+2. `cursor-ide-browser-browser_navigate`
+3. `puppeteer`
+All browsers maintain session, so login once with cursor/longnode123 then verify any page. The accessibility tree view for cursor-ide-browser is very limited and doesn't allow a visual bitmap screenshot, so for layout issues you will need to use chrome-devtools-mcp.
 - **AVOID Invoke-WebRequest FOR AUTH PAGES**: It has no session. Use built-in browser instead.
 - **NEVER BLAME USER CACHE**: User already uses Ctrl+F5. If changes aren't visible after server restart, the code is wrong.
 
