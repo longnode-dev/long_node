@@ -33,7 +33,8 @@ from .cw_login import login_user, logout_user, current_user
 from flask_limiter import RateLimitExceeded
 from flask_limiter.util import get_remote_address
 from sqlalchemy.exc import IntegrityError, InvalidRequestError, OperationalError
-from sqlalchemy.sql.expression import text, func, false, not_, and_, or_
+from sqlalchemy.sql.expression import text, func, false, not_, and_, or_, cast
+from sqlalchemy import Float
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.sql.functions import coalesce
 from werkzeug.datastructures import Headers
@@ -344,6 +345,20 @@ def get_sort_function(sort_param, data):
     order = [db.Books.timestamp.desc()]
     if sort_param == 'stored':
         sort_param = current_user.get_view_property(data, 'stored')
+        # If no stored preference exists, use Calibre desktop default sort:
+        # timestamp (desc) -> series -> series_index (numeric) -> author -> title
+        # Only apply this behavior for Long Node Theme (theme 2)
+        # Cast series_index to numeric for proper sorting (handles "1.0", "2.0", "10.0" correctly)
+        if sort_param is None and config.config_theme == 2:
+            log.debug("Applying Calibre desktop default sort: timestamp desc -> series -> series_index -> author -> title")
+            # Use CAST to REAL for SQLite numeric sorting of series_index string
+            order = [db.Books.timestamp.desc(), db.Series.name, cast(db.Books.series_index, Float), db.Books.author_sort, db.Books.sort]
+            sort_param = "stored"
+        else:
+            if sort_param is not None:
+                log.debug(f"Using stored sort preference: {sort_param}, theme: {config.config_theme}")
+            elif config.config_theme != 2:
+                log.debug(f"Theme is {config.config_theme}, not 2 - using default sort")
     else:
         current_user.set_view_property(data, 'stored', sort_param)
     if sort_param == 'pubnew':
