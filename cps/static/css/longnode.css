@@ -57,6 +57,9 @@ body.longnode .container-fluid .book {
     top: auto !important;
 }
 
+/* NOTE: Do NOT override book column widths - let Bootstrap handle naturally */
+/* Kindle gets proper layout from Bootstrap's responsive grid classes */
+
 /* Reduce spacing between cover and title (was 20px total, now ~10px) */
 body.longnode .book .cover {
     margin-bottom: 5px;
@@ -885,12 +888,12 @@ body.longnode .navbar-default .navbar-toggle {
     border-color: var(--ln-text-dim);
 }
 
-/* Kindle Fix: Apply book-detail-like rules to ALL Long Node pages */
+/* Kindle Fix: sidebar and navbar-collapse behavior */
 /* These rules have NO media query so they work on Kindle which doesn't evaluate media queries */
 /* Then we use @media (min-width: 768px) to UNDO them for desktop */
 
 /* Hide sidebar by default (Kindle-compatible - no media query) */
-body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 > .navigation {
+body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 {
     display: none;
 }
 
@@ -904,10 +907,19 @@ body.longnode:not(.book) .navbar-collapse.collapse.in {
     display: block !important;
 }
 
-/* Desktop (768px+): Undo the above rules - show sidebar, let Bootstrap handle collapse */
+/* Make content full-width when sidebar is hidden */
+body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-10 {
+    width: 100%;
+}
+
+/* Desktop (768px+): Undo the above rules - show sidebar, restore widths */
 @media (min-width: 768px) {
-    body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 > .navigation {
+    body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 {
         display: block;
+    }
+    
+    body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-10 {
+        width: 83.33333333%;
     }
     
     body.longnode:not(.book) .navbar-collapse.collapse {
