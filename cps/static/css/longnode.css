@@ -49,6 +49,14 @@ body.longnode {
    Book Grid Display Improvements
    ======================================== */
 
+/* Override Isotope's absolute positioning - use normal flow instead */
+/* This ensures Bootstrap grid works correctly for Long Node theme */
+body.longnode .container-fluid .book {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+}
+
 /* Reduce spacing between cover and title (was 20px total, now ~10px) */
 body.longnode .book .cover {
     margin-bottom: 5px;
@@ -877,6 +885,36 @@ body.longnode .navbar-default .navbar-toggle {
     border-color: var(--ln-text-dim);
 }
 
+/* Kindle Fix: Apply book-detail-like rules to ALL Long Node pages */
+/* These rules have NO media query so they work on Kindle which doesn't evaluate media queries */
+/* Then we use @media (min-width: 768px) to UNDO them for desktop */
+
+/* Hide sidebar by default (Kindle-compatible - no media query) */
+body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 > .navigation {
+    display: none;
+}
+
+/* Hide navbar-collapse by default (Kindle-compatible - no media query) */
+body.longnode:not(.book) .navbar-collapse.collapse {
+    display: none !important;
+}
+
+/* Show navbar-collapse when .in class is added (user clicked hamburger) */
+body.longnode:not(.book) .navbar-collapse.collapse.in {
+    display: block !important;
+}
+
+/* Desktop (768px+): Undo the above rules - show sidebar, let Bootstrap handle collapse */
+@media (min-width: 768px) {
+    body.longnode:not(.book) .container-fluid > .row-fluid > .col-sm-2 > .navigation {
+        display: block;
+    }
+    
+    body.longnode:not(.book) .navbar-collapse.collapse {
+        display: block !important;
+    }
+}
+
 body.longnode .navbar-default .navbar-toggle .icon-bar {
     background-color: var(--ln-text-light);
 }
@@ -1105,7 +1143,29 @@ body.longnode .navbar-collapse {
     border-color: #444;
 }
 
-/* Mobile: prevent hamburger menu flickering - use same approach as book detail page */
+/* Hamburger collapse visibility */
+/* Mobile (<768px): hide collapse by default, show when .in class is added */
+@media (max-width: 767px) {
+    body.longnode .navbar-collapse.collapse {
+        display: none !important;
+        height: auto !important;
+    }
+    
+    body.longnode .navbar-collapse.collapse.in {
+        display: block !important;
+    }
+    
+    /* Disable the collapsing animation - prevents flickering */
+    body.longnode .navbar-collapse.collapsing {
+        display: block !important;
+        height: auto !important;
+        transition: none !important;
+    }
+}
+
+/* Desktop (768px+): Bootstrap handles collapse visibility */
+
+/* Mobile overlay positioning - only for smaller viewports */
 @media (max-width: 767px) {
     body.longnode .navbar-collapse {
         position: absolute;
@@ -1117,23 +1177,6 @@ body.longnode .navbar-collapse {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         max-height: 80vh;
         overflow-y: auto;
-    }
-    
-    /* Use explicit display control instead of Bootstrap height animation */
-    body.longnode .navbar-collapse.collapse {
-        display: none !important;
-        height: auto !important;
-    }
-    
-    body.longnode .navbar-collapse.collapse.in {
-        display: block !important;
-    }
-    
-    /* Disable the collapsing animation entirely */
-    body.longnode .navbar-collapse.collapsing {
-        display: block !important;
-        height: auto !important;
-        transition: none !important;
     }
     
     /* Make nav items vertical list */
