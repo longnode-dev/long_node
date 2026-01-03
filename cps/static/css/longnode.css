@@ -578,6 +578,35 @@ body.book.longnode .ln-search-toggle.active .glyphicon {
     color: var(--ln-topnav-bg);
 }
 
+/* Book detail page: expandable search form (works on all viewports) */
+body.book.longnode .ln-search-form {
+    display: none;
+    width: 100%;
+    padding: 10px 15px;
+    margin: 0;
+    background-color: var(--ln-topnav-bg);
+    border-top: 1px solid #333;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+body.book.longnode .ln-search-form.ln-search-expanded {
+    display: block !important;
+}
+
+body.book.longnode .ln-search-form .form-group {
+    width: 100%;
+    margin: 0;
+}
+
+body.book.longnode .ln-search-form .form-control {
+    width: 100%;
+    font-size: 16px; /* Prevent iOS auto-zoom */
+}
+
 /* Make navbar-collapse a dropdown overlay instead of pushing content */
 body.book.longnode .navbar-collapse {
     position: absolute;
@@ -1496,5 +1525,7 @@ body.longnode .ln-search-toggle {
     
     body.longnode .ln-search-form .form-control {
         width: 100%;
+        /* iOS Safari auto-zooms on input fields with font-size < 16px */
+        font-size: 16px;
     }
 }
