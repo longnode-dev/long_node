@@ -4,11 +4,9 @@
 <p>{{instance}} powered by
 <a href="https://github.com/janeczku/calibre-web" title="Calibre-Web">Calibre-Web</a>.
 </p>
-{% if build_git_hash and build_git_hash != 'local' %}
 <p class="text-muted small">
   <strong>Long Node Build:</strong> {{ build_git_hash }} @ {{ build_timestamp }}
 </p>
-{% endif %}
   <h3>{{_('Library Statistics')}}</h3>
 <table id="stats" class="table">
   <tbody>
