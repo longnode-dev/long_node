@@ -10,25 +10,17 @@ LABEL description="Calibre-Web Long Node - Custom fork with enhanced UI/UX based
 # This preserves all the LinuxServer.io goodness (s6-overlay, PUID/PGID handling, etc.)
 # and just adds our Long Node customizations
 
-# Copy modified Python code
-COPY --chown=abc:abc cps/__init__.py /app/calibre-web/cps/__init__.py
-COPY --chown=abc:abc cps/db.py /app/calibre-web/cps/db.py
-COPY --chown=abc:abc cps/render_template.py /app/calibre-web/cps/render_template.py
-COPY --chown=abc:abc cps/web.py /app/calibre-web/cps/web.py
+# IMPORTANT: Copy ENTIRE DIRECTORIES, not individual files.
+# This ensures any modified file is automatically included in the build.
+# Never cherry-pick individual files - that leads to forgotten files and broken deployments.
 
-# Copy modified templates
+# Copy all Python code in cps/ (top-level .py files)
+COPY --chown=abc:abc cps/*.py /app/calibre-web/cps/
+
+# Copy all templates
 COPY --chown=abc:abc cps/templates/ /app/calibre-web/cps/templates/
 
-# Copy Long Node static assets (CSS, JS, fonts, favicons)
-COPY --chown=abc:abc cps/static/css/longnode.css /app/calibre-web/cps/static/css/longnode.css
-COPY --chown=abc:abc cps/static/js/longnode.js /app/calibre-web/cps/static/js/longnode.js
-COPY --chown=abc:abc cps/static/fonts/ /app/calibre-web/cps/static/fonts/
-COPY --chown=abc:abc cps/static/favicon.ico /app/calibre-web/cps/static/favicon.ico
-COPY --chown=abc:abc cps/static/favicon-16x16.png /app/calibre-web/cps/static/favicon-16x16.png
-COPY --chown=abc:abc cps/static/favicon-32x32.png /app/calibre-web/cps/static/favicon-32x32.png
-COPY --chown=abc:abc cps/static/android-chrome-192x192.png /app/calibre-web/cps/static/android-chrome-192x192.png
-COPY --chown=abc:abc cps/static/android-chrome-512x512.png /app/calibre-web/cps/static/android-chrome-512x512.png
-COPY --chown=abc:abc cps/static/apple-touch-icon.png /app/calibre-web/cps/static/apple-touch-icon.png
-COPY --chown=abc:abc cps/static/site.webmanifest /app/calibre-web/cps/static/site.webmanifest
+# Copy all static assets (CSS, JS, fonts, images, etc.)
+COPY --chown=abc:abc cps/static/ /app/calibre-web/cps/static/
 
 # That's it! Everything else (init system, user handling, etc.) comes from LinuxServer.io
