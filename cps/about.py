@@ -23,6 +23,7 @@
 import sys
 import platform
 import sqlite3
+import subprocess
 from importlib.metadata import metadata
 from collections import OrderedDict
 
@@ -37,6 +38,36 @@ from . import build_info
 
 
 about = flask.Blueprint('about', __name__)
+
+
+def get_longnode_version():
+    """Get Long Node version info.
+    In Docker: returns baked-in build info.
+    In local dev: gets current git hash and commit date dynamically.
+    """
+    git_hash = build_info.BUILD_GIT_HASH
+    build_timestamp = build_info.BUILD_TIMESTAMP
+    
+    # If running locally (placeholder values), get actual git info
+    if git_hash == "local":
+        try:
+            # Get short git hash
+            git_hash = subprocess.check_output(
+                ["git", "rev-parse", "--short", "HEAD"],
+                stderr=subprocess.DEVNULL,
+                text=True
+            ).strip()
+            # Get commit date in human-friendly format
+            build_timestamp = subprocess.check_output(
+                ["git", "log", "-1", "--format=%cd", "--date=format:%Y-%m-%d %H:%M"],
+                stderr=subprocess.DEVNULL,
+                text=True
+            ).strip()
+        except Exception:
+            git_hash = "unknown"
+            build_timestamp = "unknown"
+    
+    return f"{git_hash} @ {build_timestamp}"
 
 modules = dict()
 req = dep_check.load_dependencies(False)
@@ -63,7 +94,10 @@ def collect_stats():
     elif constants.HOME_CONFIG:
         calibre_web_version += " - pyPi"
 
-    _VERSIONS = {'Calibre Web': calibre_web_version}
+    # Long Node Theme version first, then Calibre Web
+    _VERSIONS = OrderedDict()
+    _VERSIONS['Long Node Theme'] = get_longnode_version()
+    _VERSIONS['Calibre Web'] = calibre_web_version
     _VERSIONS.update(OrderedDict(
         Python=sys.version,
         Platform='{0[0]} {0[2]} {0[3]} {0[4]} {0[5]}'.format(platform.uname()),
@@ -83,17 +117,40 @@ def stats():
     authors = calibre_db.session.query(db.Authors).count()
     categories = calibre_db.session.query(db.Tags).count()
     series = calibre_db.session.query(db.Series).count()
-    return render_title_template('stats.html', bookcounter=counter, authorcounter=authors, versions=collect_stats(),
-                                 categorycounter=categories, seriecounter=series, title=_("Statistics"), page="stat",
-                                 build_timestamp=build_info.BUILD_TIMESTAMP, build_git_hash=build_info.BUILD_GIT_HASH)
+    return render_title_template('stats.html',
+                                 bookcounter=f"{counter:,}",
+                                 authorcounter=f"{authors:,}",
+                                 categorycounter=f"{categories:,}",
+                                 seriecounter=f"{series:,}",
+                                 versions=collect_stats(),
+                                 title=_("Statistics"), page="stat")
 
 
 @about.route("/version")
 def version():
     """Public endpoint returning build version info as JSON.
     Used for automated deployment verification."""
+    # Get dynamic version info (works for both local dev and Docker)
+    git_hash = build_info.BUILD_GIT_HASH
+    build_timestamp = build_info.BUILD_TIMESTAMP
+    
+    if git_hash == "local":
+        try:
+            git_hash = subprocess.check_output(
+                ["git", "rev-parse", "--short", "HEAD"],
+                stderr=subprocess.DEVNULL,
+                text=True
+            ).strip()
+            build_timestamp = subprocess.check_output(
+                ["git", "log", "-1", "--format=%cd", "--date=format:%Y-%m-%d %H:%M"],
+                stderr=subprocess.DEVNULL,
+                text=True
+            ).strip()
+        except Exception:
+            pass
+    
     return jsonify({
-        "git_hash": build_info.BUILD_GIT_HASH,
-        "build_timestamp": build_info.BUILD_TIMESTAMP,
+        "git_hash": git_hash,
+        "build_timestamp": build_timestamp,
         "calibre_web_version": constants.STABLE_VERSION
     })
