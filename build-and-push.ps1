@@ -16,20 +16,24 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+# Get human-readable build timestamp
+$buildTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $imageBase = "longnode/calibre-web-longnode"
 
 Write-Host "Git Hash: $gitHash" -ForegroundColor Green
-Write-Host "Timestamp: $timestamp" -ForegroundColor Green
+Write-Host "Build Time: $buildTimestamp" -ForegroundColor Green
 Write-Host "Image: $imageBase" -ForegroundColor Green
 Write-Host ""
 
-# Build the Docker image
+# Build the Docker image with build args for version info
 Write-Host "Building Docker image..." -ForegroundColor Yellow
 Write-Host "Platform: linux/amd64 (for Synology DS1522+)" -ForegroundColor Gray
 Write-Host ""
 
-docker build --platform linux/amd64 -t "${imageBase}:${gitHash}" .
+docker build --platform linux/amd64 `
+    --build-arg BUILD_TIMESTAMP="$buildTimestamp" `
+    --build-arg BUILD_GIT_HASH="$gitHash" `
+    -t "${imageBase}:${gitHash}" .
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR: Docker build failed!" -ForegroundColor Red
@@ -81,18 +85,50 @@ Write-Host "============================================" -ForegroundColor Green
 Write-Host "SUCCESS! Images pushed to Docker Hub" -ForegroundColor Green
 Write-Host "============================================" -ForegroundColor Green
 Write-Host ""
+Write-Host "Build Info:" -ForegroundColor White
+Write-Host "  Git Hash:    $gitHash" -ForegroundColor Cyan
+Write-Host "  Build Time:  $buildTimestamp" -ForegroundColor Cyan
+Write-Host ""
 Write-Host "Images available at:" -ForegroundColor White
 Write-Host "  - ${imageBase}:${gitHash}" -ForegroundColor Cyan
 Write-Host "  - ${imageBase}:latest" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "  1. Open Portainer on Synology" -ForegroundColor White
-Write-Host "  2. Go to Images -> Pull image" -ForegroundColor White
-Write-Host "  3. Pull: ${imageBase}:latest" -ForegroundColor White
-Write-Host "  4. Go to Containers -> calibre-web -> Recreate" -ForegroundColor White
-Write-Host "  5. Enable 'Pull latest image' checkbox" -ForegroundColor White
-Write-Host "  6. Deploy!" -ForegroundColor White
+
+# Verification instructions
+Write-Host "============================================" -ForegroundColor Yellow
+Write-Host "VERIFICATION" -ForegroundColor Yellow
+Write-Host "============================================" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Or run this command via SSH on Synology:" -ForegroundColor Yellow
-Write-Host "  docker pull ${imageBase}:latest && docker restart calibre-web" -ForegroundColor Gray
+Write-Host "After deployment, verify the build at:" -ForegroundColor White
+Write-Host "  Internal: http://192.168.0.10:8083/version" -ForegroundColor Cyan
+Write-Host "  External: https://books.waqasahmed.com/version" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Expected response:" -ForegroundColor White
+Write-Host "  {" -ForegroundColor Gray
+Write-Host "    `"git_hash`": `"$gitHash`"," -ForegroundColor Gray
+Write-Host "    `"build_timestamp`": `"$buildTimestamp`"" -ForegroundColor Gray
+Write-Host "  }" -ForegroundColor Gray
+Write-Host ""
+Write-Host "Or check the About page: /stats" -ForegroundColor White
+Write-Host ""
+
+# Optional: Auto-verify after deployment (requires site to be accessible)
+$verifyUrl = "https://books.waqasahmed.com/version"
+Write-Host "Attempting to verify deployment..." -ForegroundColor Yellow
+Write-Host "(This may fail if Watchtower hasn't updated yet)" -ForegroundColor Gray
+Write-Host ""
+
+try {
+    $response = Invoke-RestMethod -Uri $verifyUrl -TimeoutSec 10 -ErrorAction SilentlyContinue
+    if ($response.git_hash -eq $gitHash) {
+        Write-Host "VERIFIED: Production is running $gitHash" -ForegroundColor Green
+    } else {
+        Write-Host "PENDING: Production is running $($response.git_hash), expected $gitHash" -ForegroundColor Yellow
+        Write-Host "Wait for Watchtower to update, or manually recreate in Portainer" -ForegroundColor Gray
+    }
+} catch {
+    Write-Host "Could not verify (site may require auth or Watchtower hasn't updated yet)" -ForegroundColor Gray
+    Write-Host "Manually check: $verifyUrl" -ForegroundColor Gray
+}
+
 Write-Host ""

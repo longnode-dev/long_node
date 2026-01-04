@@ -202,3 +202,35 @@ This routing exists because Long Node uses full-page layouts while other themes 
 5. Browser caching (LEAST LIKELY - check last)
 
 **Cost of wrong assumption**: Editing the wrong file wastes tokens and time. Always verify the file path before making extensive changes.
+
+## Docker Build & Deployment
+
+### Build System
+- **Build script**: `.\build-and-push.ps1` (builds, tags, pushes to Docker Hub)
+- **Dockerfile**: Copies ENTIRE directories (`cps/*.py`, `cps/templates/`, `cps/static/`)
+- **NEVER cherry-pick individual files in Dockerfile** — this causes forgotten files and broken deployments
+
+### Version Verification (CRITICAL)
+Every Docker build embeds a git hash and timestamp. **ALWAYS verify deployments using:**
+- **API endpoint**: `/version` — returns JSON with `git_hash` and `build_timestamp`
+- **About page**: `/stats` — shows build info for logged-in users
+
+### Debugging Deployment Issues
+**When changes don't appear in production after deploy:**
+
+1. **FIRST: Check `/version` endpoint** — Is the expected git hash deployed?
+2. If wrong hash → Image wasn't pulled or container wasn't recreated
+3. If right hash but wrong behavior → Code wasn't included in build (check Dockerfile)
+4. **NEVER blame Docker Hub, Portainer, or caching** until you've verified the git hash
+
+### Deployment Checklist
+1. Run `.\build-and-push.ps1`
+2. In Portainer: Images → Remove old `longnode/calibre-web-longnode` images
+3. Pull new image: `longnode/calibre-web-longnode:latest`
+4. Containers → `calibre-web` → Recreate
+5. Verify: Hit `/version` and confirm git hash matches
+
+### Post-Deploy Verification
+The build script attempts to verify automatically. If it shows "PENDING", either:
+- Watchtower hasn't updated yet (wait 5 min)
+- Manually recreate in Portainer

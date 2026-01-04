@@ -27,11 +27,13 @@ from importlib.metadata import metadata
 from collections import OrderedDict
 
 import flask
+from flask import jsonify
 from flask_babel import gettext as _
 
 from . import db, calibre_db, converter, uploader, constants, dep_check
 from .render_template import render_title_template
 from .usermanagement import user_login_required
+from . import build_info
 
 
 about = flask.Blueprint('about', __name__)
@@ -82,4 +84,16 @@ def stats():
     categories = calibre_db.session.query(db.Tags).count()
     series = calibre_db.session.query(db.Series).count()
     return render_title_template('stats.html', bookcounter=counter, authorcounter=authors, versions=collect_stats(),
-                                 categorycounter=categories, seriecounter=series, title=_("Statistics"), page="stat")
+                                 categorycounter=categories, seriecounter=series, title=_("Statistics"), page="stat",
+                                 build_timestamp=build_info.BUILD_TIMESTAMP, build_git_hash=build_info.BUILD_GIT_HASH)
+
+
+@about.route("/version")
+def version():
+    """Public endpoint returning build version info as JSON.
+    Used for automated deployment verification."""
+    return jsonify({
+        "git_hash": build_info.BUILD_GIT_HASH,
+        "build_timestamp": build_info.BUILD_TIMESTAMP,
+        "calibre_web_version": constants.STABLE_VERSION
+    })
